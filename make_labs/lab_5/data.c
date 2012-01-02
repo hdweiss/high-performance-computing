@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "data.h"
+#include <math.h>
 
 void 
 data(void) { 

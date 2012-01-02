@@ -14,7 +14,8 @@ clean:
 realclean : clean
 	@rm -f project1
 
-# file dependecies
-data.o : data.c data.h
-main.o : data.h io.h main.c
-io.o : io.h io.c
+# DO NOT DELETE
+
+data.o: data.h
+io.o: io.h
+main.o: io.h data.h
