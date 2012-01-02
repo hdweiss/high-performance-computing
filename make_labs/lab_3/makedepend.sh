@@ -1,0 +1,1 @@
+makedepend -Y. *.c
