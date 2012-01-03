@@ -1,12 +1,14 @@
 # Sample Makefile
-CC = g++
-OPT = -g -O3 
-WARN = -Wall
+CC = suncc
+OPT = -g -fast -xlic_lib=sunperf
+WARN = 
 CFLAGS = $(OPT) $(WARN)
+
 OBJECTS = main.o matrix.o
 
-mm : $(OBJECTS)
+mm: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+
 
 clean:
 	@rm -f *.o core

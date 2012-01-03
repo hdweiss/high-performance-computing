@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include <cstdlib>
+//#include <cstdlib>
 #include "matrix.h"
 
 
@@ -19,8 +19,10 @@ int main() {
     print_matrix(B, k, n, "B after init");
     
     double** C = simple_mm(m, n, k, A, B);
+    print_matrix(C, m, n, "C after simple_mm");
 
-    print_matrix(C, m, n, "C after multiplication");
+    C = dgemm_mm(m, n, k, A, B);
+    print_matrix(C, m, n, "C after dgemm_mm");
     
     return 0;
 }
