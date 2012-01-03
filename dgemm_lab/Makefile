@@ -1,19 +1,22 @@
 # Sample Makefile
-CC = gcc
-OPT = -g -O3
+CC = g++
+OPT = -g -O3 
 WARN = -Wall
 CFLAGS = $(OPT) $(WARN)
-OBJECTS = main.o
+OBJECTS = main.o matrix.o
 
-project1 : $(OBJECTS)
-	$(CC) $(CFLAGS) -o project1 $(OBJECTS)
+mm : $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
 	@rm -f *.o core
 
 realclean : clean
-	@rm -f project1
+	@rm -f mm
 
 depend:
 	makedepend -Y. *.c
 # DO NOT DELETE
+
+main.o: matrix.h
+matrix.o: matrix.h
