@@ -22,6 +22,14 @@ void init_matrix(int row, int column, int scale_factor, double** matrix) {
     }
 }
 
+void init_zero(int p, int q, int s, double** matrix) {
+	for(int i = 0; i < s; i++) {
+        for(int j = 0; j < s; j++) {
+            matrix[i+p*s][j+q*s] = 0.0;
+        }
+    }
+}
+
 void print_matrix(double** matrix, int row, int column, const char* message) {
     if(debug == 0)
         return;
@@ -52,6 +60,42 @@ double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
     }
 
     return xtime() - start_time;
+}
+
+double sub_mm(int p, int q, int r, int s, double** a, double** b, double** c) {
+
+    for(int i = 0; i < s; i++) {
+		
+        for(int j = 0; j < s; j++) {
+
+            for(int l = 0; l < s; l++) {
+                c[i+p*s][j+q*s] = c[i+p*s][j+q*s] + a[i+p*s][l+r*s] * b[l+r*s][j+q*s];
+            }
+        }
+    }
+}
+
+double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) {
+	double start_time = xtime();
+	int p, q, r;
+	int sn = n/s;
+	int sm = m/s;
+	int sk = k/s;
+	
+	for (p = 0; p < sn; p++ ) {
+		for (q = 0; q < sm; q++) {
+			//clear submatrix
+			// c(p,q) = 0
+			init_zero(p, q, s, c);
+			for (r = 0; r < sk; r++) {
+				//block multiplication
+				// c(p,q)
+				sub_mm(p, q, r, s, a, b, c);
+				
+			}
+		}
+	}
+	return xtime() - start_time;
 }
 
 double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
