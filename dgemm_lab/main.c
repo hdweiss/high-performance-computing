@@ -4,8 +4,10 @@
 
 int debug;
 
-void print_timing(double time_simple, double time_dgemm, int loopcount) {
-    printf("%f %f \n", time_simple/loopcount, time_dgemm/loopcount);
+void print_timing(double time_simple, double time_dgemm, int loopcount, int m, int n, int k) {
+
+    int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
+    printf("%i %f %f \n", matrix_size, time_simple/loopcount, time_dgemm/loopcount);
 }
 
 void run_matrix_calc(int m, int n, int k, int loopcount) {
@@ -28,19 +30,22 @@ void run_matrix_calc(int m, int n, int k, int loopcount) {
         C = create_matrix(m, n);
         gemm_mm_time += dgemm_mm(m, n, k, A, B, C);
         print_matrix(C, m, n, "C after dgemm_mm");
-        print_timing(simple_mm_time, gemm_mm_time, i + 1);
     }
+
+    print_timing(simple_mm_time, gemm_mm_time, loopcount+1, m, n, k);
 }
 
 int main(int argc, char** argv) {
     debug = 0;
     
-    int m = 1000;
-    int n = 1000;
-    int k = 1000;
-    int loop_count = 100;
+    int m = 100;
+    int n = 100;
+    int k = 100;
+    int loop_count = 5;
+    int limit = 10;
 
-    run_matrix_calc(m, n, k, loop_count);
-    
+    for(int i = 1; i <= limit; i++) {
+        run_matrix_calc(m*i, n*i, k*i, loop_count);
+    }
     return 0;
 }
