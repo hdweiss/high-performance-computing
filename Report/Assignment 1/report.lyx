@@ -60,11 +60,19 @@
 \begin_body
 
 \begin_layout Title
+
+\noun on
 02614 High-Performance Computing
 \end_layout
 
-\begin_layout Title
+\begin_layout Author
+
+\noun on
 Assignment 1: Matrix Multiplication
+\end_layout
+
+\begin_layout Date
+Due 6th of January 2012
 \end_layout
 
 \begin_layout Section
@@ -74,6 +82,7 @@ Summary
 \begin_layout Standard
 In this report we will implement three different matrix-matrix multiplication
  functions and evaluate the performance of the functions.
+ The functions use different algorithms for multiplying the two matrices.
 \end_layout
 
 \begin_layout Section
@@ -81,24 +90,51 @@ Statement of problem
 \end_layout
 
 \begin_layout Standard
-A naive matrix multiplication function is written.
+We are to implement and evaluate three different matrix-matrix multiplication
+ function used in a High-Performance Computing system.
+ The three different implementations are:
+\end_layout
+
+\begin_layout Enumerate
+A simple matrix multiplication function, with three nested loops.
+\end_layout
+
+\begin_layout Enumerate
+Invoking the DGEMM function from the sun performance library.
+\end_layout
+
+\begin_layout Enumerate
+A blocked matrix multiplication function, with the block size adjusted for
+ the processor characteristics.
 \end_layout
 
 \begin_layout Standard
-The dgemm function from the sun performance library is invoked.
+Evaluation of the functions??
 \end_layout
 
 \begin_layout Standard
-A bloked matrix multiplication function is written.
-\end_layout
-
-\begin_layout Standard
-What problem is solved and perhaps in what steps the solution is decomposed
- into smaller steps (which will then be found in appropriate sections).
+(which will then be found in appropriate sections).
 \end_layout
 
 \begin_layout Section
 Description of hardware and software
+\end_layout
+
+\begin_layout Standard
+The machines we have tested our functions on are the 
+\noun on
+gbar
+\noun default
+ linux servers, with 
+\noun on
+amd
+\noun default
+ or 
+\noun on
+intel
+\noun default
+ processors.
+ The gbar has two different linux HPC servers
 \end_layout
 
 \begin_layout Standard
@@ -111,12 +147,20 @@ Description of theory
 \end_layout
 
 \begin_layout Standard
+Which choices have been made?
+\end_layout
+
+\begin_layout Standard
 What motivates the choices you make? What is used to verify correctness
  of the implemented code? Etc.
 \end_layout
 
 \begin_layout Section
 Description of algorithm
+\end_layout
+
+\begin_layout Standard
+In how many ways can the loops of the naive algorithm be nested?
 \end_layout
 
 \begin_layout Standard
