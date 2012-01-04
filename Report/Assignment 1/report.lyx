@@ -121,7 +121,7 @@ Description of hardware and software
 \end_layout
 
 \begin_layout Standard
-The machines we have tested our functions on are the 
+The machines we have tested our functions on, are the 
 \noun on
 gbar
 \noun default
@@ -134,7 +134,11 @@ amd
 intel
 \noun default
  processors.
- The gbar has two different linux HPC servers
+ The gbar has two different linux HPC servers.
+\end_layout
+
+\begin_layout Standard
+For the DGEMM function we have used the SUN performance library.
 \end_layout
 
 \begin_layout Standard
@@ -151,12 +155,15 @@ Which choices have been made?
 \end_layout
 
 \begin_layout Standard
-What motivates the choices you make? What is used to verify correctness
- of the implemented code? Etc.
+What is used to verify correctness of the implemented code? Etc.
 \end_layout
 
 \begin_layout Section
 Description of algorithm
+\end_layout
+
+\begin_layout Standard
+The simple matrix multiplication function has three nested loops for 
 \end_layout
 
 \begin_layout Standard
