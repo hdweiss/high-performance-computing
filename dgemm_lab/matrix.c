@@ -20,20 +20,6 @@ void init_matrix(int row, int column, int scale_factor, double** matrix) {
     }
 }
 
-double** simple_mm(int m, int n, int k, double** a, double** b) {
-    double** c = create_matrix(m, n);
-    
-    for(int i = 0; i < m; i++) {
-        for(int j = 0; j < n; j++) {
-            for(int q = 0; q < k; q++) {
-                c[i][j] = c[i][j] + a[i][q] * b[q][j];
-            }
-        }
-    }
-
-    return c;
-}
-
 void print_matrix(double** matrix, int row, int column, const char* message) {
     if(matrix == NULL) {
         printf("Print got null matrix %s", message);
@@ -49,14 +35,21 @@ void print_matrix(double** matrix, int row, int column, const char* message) {
     }
 }
 
-/* void dgemm(char transa, char transb, int m, int n, int k, double alpha, */
-/*                  double  *a,  int lda, double *b, int ldb, double beta, double */
-/*                  *c, int ldc); */
 
+double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
+    init_timer();
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < n; j++) {
+            for(int q = 0; q < k; q++) {
+                c[i][j] = c[i][j] + a[i][q] * b[q][j];
+            }
+        }
+    }
 
-double** dgemm_mm(int m, int n, int k, double** a, double** b) {
-    double** c = create_matrix(m, n);
+    return xtime();
+}
 
+double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
     double alpha = 1;
     double beta = 0;
 
@@ -65,6 +58,7 @@ double** dgemm_mm(int m, int n, int k, double** a, double** b) {
 
     int ldc = n; // 13. Parameter
 
+    init_timer();
     dgemm_64('N', 'N',
           n, m, k,
           alpha,
@@ -73,5 +67,5 @@ double** dgemm_mm(int m, int n, int k, double** a, double** b) {
           beta,
           c[0], ldc);
 
-    return c;
+    return xtime();
 }
