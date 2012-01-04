@@ -10,7 +10,7 @@ void print_timing(double time_simple, double time_dgemm, int loopcount, int m, i
     printf("%i %f %f \n", matrix_size, time_simple/loopcount, time_dgemm/loopcount);
 }
 
-void run_matrix_calc(int m, int n, int k, int loopcount) {
+void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
     double** A = create_matrix(m, k);
     double** B = create_matrix(k, n);
     init_matrix(m, k, 10, A);
@@ -21,6 +21,7 @@ void run_matrix_calc(int m, int n, int k, int loopcount) {
 
     double simple_mm_time = 0;
     double gemm_mm_time = 0;
+	double block_mm_time = 0;
     
     for(int i = 0; i < loopcount; i++) {
         double** C = create_matrix(m, n);
@@ -30,6 +31,11 @@ void run_matrix_calc(int m, int n, int k, int loopcount) {
         C = create_matrix(m, n);
         gemm_mm_time += dgemm_mm(m, n, k, A, B, C);
         print_matrix(C, m, n, "C after dgemm_mm");
+
+		C = create_matrix(m, n);
+        block_mm_time += block_mm(m, n, k, A, B, C, s);
+        print_matrix(C, m, n, "C after block_mm");
+
     }
 
     print_timing(simple_mm_time, gemm_mm_time, loopcount+1, m, n, k);
@@ -37,15 +43,16 @@ void run_matrix_calc(int m, int n, int k, int loopcount) {
 
 int main(int argc, char** argv) {
     debug = 0;
-    
+
     int m = 100;
     int n = 100;
     int k = 100;
     int loop_count = 5;
-    int limit = 5;
+    int limit = 10;
+	int s = 10;
 
-    for(int i = 5; i <= limit; i++) {
-        run_matrix_calc(m*i, n*i, k*i, loop_count);
+    for(int i = 1; i <= limit; i++) {
+        run_matrix_calc(m*i, n*i, k*i, loop_count, s);
     }
     return 0;
 }
