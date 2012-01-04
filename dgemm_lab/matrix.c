@@ -1,6 +1,8 @@
 
 #include "matrix.h"
 
+extern int debug;
+
 double** create_matrix(int row, int column) {
     double** matrix = (double**) malloc(row * sizeof(double*));
     double* space = (double*) calloc(row * column, sizeof(double));
@@ -21,6 +23,9 @@ void init_matrix(int row, int column, int scale_factor, double** matrix) {
 }
 
 void print_matrix(double** matrix, int row, int column, const char* message) {
+    if(debug == 0)
+        return;
+
     if(matrix == NULL) {
         printf("Print got null matrix %s", message);
         return;
@@ -37,7 +42,7 @@ void print_matrix(double** matrix, int row, int column, const char* message) {
 
 
 double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
-    init_timer();
+    double start_time = xtime();
     for(int i = 0; i < m; i++) {
         for(int j = 0; j < n; j++) {
             for(int q = 0; q < k; q++) {
@@ -46,7 +51,7 @@ double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
         }
     }
 
-    return xtime();
+    return xtime() - start_time;
 }
 
 double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
@@ -58,7 +63,7 @@ double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
 
     int ldc = n; // 13. Parameter
 
-    init_timer();
+    double start_time = xtime();
     dgemm_64('N', 'N',
           n, m, k,
           alpha,
@@ -67,5 +72,5 @@ double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
           beta,
           c[0], ldc);
 
-    return xtime();
+    return xtime() - start_time;
 }
