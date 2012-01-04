@@ -42,9 +42,9 @@ int main(int argc, char** argv) {
     int n = 100;
     int k = 100;
     int loop_count = 5;
-    int limit = 10;
+    int limit = 5;
 
-    for(int i = 1; i <= limit; i++) {
+    for(int i = 5; i <= limit; i++) {
         run_matrix_calc(m*i, n*i, k*i, loop_count);
     }
     return 0;
