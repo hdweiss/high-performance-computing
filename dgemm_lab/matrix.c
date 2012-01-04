@@ -61,13 +61,11 @@ double** dgemm_mm(int m, int n, int k, double** a, double** b) {
     double beta = 0;
 
     int lda = k; // 10. Parameter
-    int ldb = m; // 8. Parameter
+    int ldb = n; // 8. Parameter
 
-    int ldc = k; // 13. Parameter
+    int ldc = n; // 13. Parameter
 
-    char trans = 'N';
-    
-    dgemm_64(trans, trans,
+    dgemm_64('N', 'N',
           n, m, k,
           alpha,
           b[0], ldb,
