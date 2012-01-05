@@ -1,6 +1,9 @@
+experiments/
 .DS_Store
 *.o
 project1
 Makefile.bak
 mm
-report.lyx~
+*~
+\#*
+*.dat

@@ -273,15 +273,57 @@ Henning
 \end_layout
 
 \begin_layout Standard
-measure points/how they are generated
+We have used the Sun studio collect tool to generate our results.
+ The collect tool allows us to get a summary of time spent in each function
+ without the need for modifications to the program, enabling us to get fairly
+ good performance measures.
+ Additionally the tool allows us to query the hardware performance counters
+ of the CPU to obtain supplemental performance data.
+ We have used this facility to query the 
+\begin_inset Quotes eld
+\end_inset
+
+fp_ops
+\begin_inset Quotes erd
+\end_inset
+
+ (total floating point operations) and the data cache misses counters.
 \end_layout
 
 \begin_layout Standard
-looping inside the mm functions
+The matrix multiplication subroutines must run for a couple of seconds to
+ allow 
+\emph on
+collect
+\emph default
+ to query the program and get the measurements.
+ For this purpose we have created loops around the matrix calculation functions
+ in our program that achieve a runtime of at least three seconds for each
+ of the three algorithms.
+ The number of times the algorithms runs may vary, but by normalizing the
+ performance counters with the actual time spent we can generate comparable
+ results.
+ As a positive side effect this will give us an average for all data generated
+ of our functions.
 \end_layout
 
 \begin_layout Standard
-functionality of our scripts
+Our main program several parameters as input, allowing us to control the
+ size of the matrices and the block size used by the block matrix-multiply
+ algorithm.
+ This allowed us to write a wrapper script that varies the size of the matrices
+ generated, making it easy to generate many measurements.
+ 
+\emph on
+Collect
+\emph default
+ will generate files binary files that can be accessed by 
+\emph on
+er_print
+\emph default
+ and further manipulation by bash scripts, awk and gnuplot allows us to
+ fully automatically generate performance graphs, which are presented in
+ the following sections.
 \end_layout
 
 \begin_layout Section
@@ -300,6 +342,20 @@ Evangelia
 
 \begin_layout Standard
 Always using suncc as compiler
+\end_layout
+
+\begin_layout Standard
+compiler version
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -520,20 +576,6 @@ Compilers
 \end_layout
 
 \begin_layout Standard
-version
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Flags
 \begin_inset Marginal
 status open
@@ -593,189 +635,24 @@ Henning
 
 \end_layout
 
-\begin_layout Subsection*
-Cache misses
-\end_layout
-
 \begin_layout Standard
-Matrix sizes: 23437 for 5 iterations
-\end_layout
-
-\begin_layout Itemize
-Simple:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Time: 4.735780
-\end_layout
-
-\begin_layout Itemize
-L1 D-Cache misses: 2 603 007 836
-\end_layout
-
-\begin_layout Itemize
-L2 D-Cache misses: 632 119 002
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Dgemm:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Time: 0.292122 
-\end_layout
-
-\begin_layout Itemize
-L1 D-Cache misses: 90 000 005
-\end_layout
-
-\begin_layout Itemize
-L2 D-Cache misses: 7 100 193
-\end_layout
-
-\end_deeper
-\begin_layout Subsection*
-Speed
-\end_layout
-
-\begin_layout Standard
-Matrix sizes: variable from 100*1..
- 100*10 (for m, n and k) and 5 iterations for each size
-\end_layout
-
-\begin_layout Itemize
-Simple
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-FP adds total: 11 339 988 599
-\end_layout
-
-\begin_layout Itemize
-FP muls total: 11 419 988 547
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Dgemm
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-FP adds total: 5 439 996 293
-\end_layout
-
-\begin_layout Itemize
-FP muls total: 5 459 996 252
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Output (total matrix size | simple_mm time in sec | dgemm_mm time in sec)
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-234 0.003333 0.000667  
-\end_layout
-
-\begin_layout Plain Layout
-
-937 0.017997 0.002666 
-\end_layout
-
-\begin_layout Plain Layout
-
-2109 0.072489 0.009165  
-\end_layout
-
-\begin_layout Plain Layout
-
-3750 0.231298 0.020664  
-\end_layout
-
-\begin_layout Plain Layout
-
-5859 0.467096 0.042327  
-\end_layout
-
-\begin_layout Plain Layout
-
-8437 1.445114 0.067490  
-\end_layout
-
-\begin_layout Plain Layout
-
-11484 1.103166 0.107484  
-\end_layout
-
-\begin_layout Plain Layout
-
-15000 3.542295 0.161475  
-\end_layout
-
-\begin_layout Plain Layout
-
-18984 3.318995 0.224966  
-\end_layout
-
-\begin_layout Plain Layout
-
-23437 4.272018 0.308952
-\end_layout
+\begin_inset Graphics
+	filename graph_flops.eps
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Itemize
-Total simple: 14.4738 sec
+\begin_layout Standard
+\begin_inset Graphics
+	filename graph_cache.eps
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-Total dgemm: 0.945856 sec
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Simple
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Total FLOP: 22 759 977 146
-\end_layout
-
-\begin_layout Itemize
-FLOP/s: 314 498 986
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Dgemm
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Total FLOPS: 10 899 992 545
-\end_layout
-
-\begin_layout Itemize
-FLOP/s: 2 304 789 004
-\end_layout
-
-\end_deeper
 \begin_layout Section
 Conclusions
 \end_layout

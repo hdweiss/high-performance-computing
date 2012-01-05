@@ -26,12 +26,12 @@ cleanexp:
 
 flops:
 	./runAnalyzerFlops.sh
-	./runFetchFlops.sh > flops.dat
+	./runFetchFlops.sh | sort --general-numeric-sort > flops.dat
 	gnuplot flops.p
 
 cache:
 	./runAnalyzerCacheMiss.sh
-	./runFetchCacheMisses.sh > cache.dat
+	./runFetchCacheMisses.sh | sort --general-numeric-sort > cache.dat
 	gnuplot cache.p
 
 # DO NOT DELETE
