@@ -1,7 +1,6 @@
 #!/bin/bash
 
-EXP_FILES='experiments/hpc*'
-FIND_COMMAND='find experiments/hpc* -maxdepth 0  -printf "%p$IFS"'
+EXP_FILES='experiments/flops*'
 
 for file in $EXP_FILES
 do
