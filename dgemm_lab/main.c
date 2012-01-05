@@ -26,7 +26,7 @@ void run_matrix_calc(int m, int n, int k, int s) {
 	int loopcount = 0;
 
     
-    double** C
+    double** C;
 	while(simple_mm_time < 3.0 && loopcount <= 2){
 		C = create_matrix(m, n);
         simple_mm_time += simple_mm(m, n, k, A, B, C);
