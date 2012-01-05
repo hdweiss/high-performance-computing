@@ -4,10 +4,10 @@
 
 int debug;
 
-void print_timing(double time_simple, double time_dgemm, int loopcount, int m, int n, int k) {
+void print_timing(double time_simple, double time_dgemm, double time_block, int loopcount, int m, int n, int k) {
 
     int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
-    printf("%i %f %f \n", matrix_size, time_simple/loopcount, time_dgemm/loopcount);
+    printf("%i %f %f %f\n", matrix_size, time_simple/loopcount, time_dgemm/loopcount, time_block/loopcount);
 }
 
 void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
@@ -38,7 +38,7 @@ void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
 
     }
 
-    print_timing(simple_mm_time, gemm_mm_time, loopcount+1, m, n, k);
+    print_timing(simple_mm_time, gemm_mm_time, block_mm_time, loopcount+1, m, n, k);
 }
 
 int main(int argc, char** argv) {
