@@ -83,6 +83,6 @@ int main(int argc, char** argv) {
     int loop_count = 5;
 
     run_matrix_calc(m, n, k, s);
-    //printf("Ran matrix calculations with %i %i %i\n", m, n, k);
+    printf("Ran matrix calculations with %i %i %i %i\n", m, n, k, s);
     return 0;
 }
