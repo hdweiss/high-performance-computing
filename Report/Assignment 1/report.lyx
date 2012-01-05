@@ -179,6 +179,414 @@ Which algorithm are you trying to implement? How have you verified your
 Results
 \end_layout
 
+\begin_layout Standard
+Always using suncc as compiler
+\end_layout
+
+\begin_layout Subsection*
+Machines Used
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Machines 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# of CPUs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+L2 Cache
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clock
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n-62-24-9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linux 2.6.32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x86_64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+512kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.9 GHz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Cache misses
+\end_layout
+
+\begin_layout Standard
+Matrix sizes: 23437 for 5 iterations
+\end_layout
+
+\begin_layout Itemize
+Simple:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Time: 4.735780
+\end_layout
+
+\begin_layout Itemize
+L1 D-Cache misses: 2 603 007 836
+\end_layout
+
+\begin_layout Itemize
+L2 D-Cache misses: 632 119 002
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Dgemm:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Time: 0.292122 
+\end_layout
+
+\begin_layout Itemize
+L1 D-Cache misses: 9 000 0005
+\end_layout
+
+\begin_layout Itemize
+L2 D-Cache misses: 7 100 193
+\end_layout
+
+\end_deeper
+\begin_layout Subsection*
+Speed
+\end_layout
+
+\begin_layout Standard
+Matrix sizes: variable from 100*1..
+ 100*10 (for m, n and k) and 5 iterations for each size
+\end_layout
+
+\begin_layout Itemize
+Simple
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+FP adds total: 11 339 988 599
+\end_layout
+
+\begin_layout Itemize
+FP muls total: 11 419 988 547
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Dgemm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+FP adds total: 5 439 996 293
+\end_layout
+
+\begin_layout Itemize
+FP muls total: 5 459 996 252
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Output (total matrix size | simple_mm time in sec | dgemm_mm time in sec)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+234 0.003333 0.000667  
+\end_layout
+
+\begin_layout Plain Layout
+
+937 0.017997 0.002666 
+\end_layout
+
+\begin_layout Plain Layout
+
+2109 0.072489 0.009165  
+\end_layout
+
+\begin_layout Plain Layout
+
+3750 0.231298 0.020664  
+\end_layout
+
+\begin_layout Plain Layout
+
+5859 0.467096 0.042327  
+\end_layout
+
+\begin_layout Plain Layout
+
+8437 1.445114 0.067490  
+\end_layout
+
+\begin_layout Plain Layout
+
+11484 1.103166 0.107484  
+\end_layout
+
+\begin_layout Plain Layout
+
+15000 3.542295 0.161475  
+\end_layout
+
+\begin_layout Plain Layout
+
+18984 3.318995 0.224966  
+\end_layout
+
+\begin_layout Plain Layout
+
+23437 4.272018 0.308952
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Total simple: 14.4738 sec
+\end_layout
+
+\begin_layout Itemize
+Total dgemm: 0.945856 sec
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Simple
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Total FLOP: 22 759 977 146
+\end_layout
+
+\begin_layout Itemize
+FLOP/s: 314 498 986
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Dgemm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Total FLOPS: 10 899 992 545
+\end_layout
+
+\begin_layout Itemize
+FLOP/s: 2 304 789 004
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Naive matrix mult
 \end_layout
