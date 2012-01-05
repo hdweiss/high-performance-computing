@@ -49,17 +49,26 @@ void print_matrix(double** matrix, int row, int column, const char* message) {
 }
 
 
-double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
-    double start_time = xtime();
-    for(int i = 0; i < m; i++) {
-        for(int j = 0; j < n; j++) {
-            for(int q = 0; q < k; q++) {
-                c[i][j] = c[i][j] + a[i][q] * b[q][j];
-            }
-        }
-    }
-
-    return xtime() - start_time;
+int simple_mm(int m, int n, int k, double** a, double** b, double** c) {
+	double start_time;
+	double loop_time = 0;
+	int loopcount = 0;
+	while((loop_time < 3.0) || (loopcount <= 2)){
+		c = create_matrix(m, n);
+		start_time = xtime();
+		for(int i = 0; i < m; i++) {
+		    for(int j = 0; j < n; j++) {
+		        for(int q = 0; q < k; q++) {
+		            c[i][j] = c[i][j] + a[i][q] * b[q][j];
+		        }
+		    }
+		}
+		loop_time += xtime() - start_time;
+		loopcount++;
+		free(c[0]);
+		free(c);
+	}
+    return loopcount;
 }
 
 double sub_mm(int p, int q, int r, int s, int m, int n, int k, double** a, double** b, double** c) {
@@ -77,8 +86,10 @@ double sub_mm(int p, int q, int r, int s, int m, int n, int k, double** a, doubl
 
 }
 
-double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) {
-	double start_time = xtime();
+int block_mm(int m, int n, int k, double** a, double** b, double** c, int s) { 
+	double start_time;
+	double loop_time = 0;
+	double loopcount = 0;
 	int p, q, r;
 	double sn_d = (double)n/(double)s;
 	double sm_d = (double)m/(double)s;
@@ -87,23 +98,34 @@ double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) 
 	int sm = (sm_d - (int)sm_d) > 0? ((int)sm_d + 1) : (int)sm_d;
 	int sk = (sk_d - (int)sk_d) > 0? ((int)sk_d + 1) : (int)sk_d;
 	
-	for (p = 0; p < sm; p++ ) {
-		for (q = 0; q < sn; q++) {
-			//clear submatrix
-			// c(p,q) = 0
-			//init_zero(p, q, s, c);
-			for (r = 0; r < sk; r++) {
-				//block multiplication
-				// c(p,q)
-				sub_mm(p, q, r, s, m, n, k, a, b, c);
-				
+	while(loop_time < 3.0 || loopcount <= 2){
+		c = create_matrix(m,n);
+		start_time = xtime();
+		for (p = 0; p < sm; p++ ) {
+			for (q = 0; q < sn; q++) {
+				//clear submatrix
+				// c(p,q) = 0
+				//init_zero(p, q, s, c);
+				for (r = 0; r < sk; r++) {
+					//block multiplication
+					// c(p,q)
+					sub_mm(p, q, r, s, m, n, k, a, b, c);
+					
+				}
 			}
 		}
+		loop_time += xtime() - start_time;
+		loopcount++;
+		free(c[0]);
+		free(c);
 	}
-	return xtime() - start_time;
+	return loopcount;
 }
 
-double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
+int dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
+	double start_time;
+	double loop_time = 0;
+	double loopcount = 0;
     double alpha = 1;
     double beta = 0;
 
@@ -111,15 +133,20 @@ double dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
     int ldb = n; // 8. Parameter
 
     int ldc = n; // 13. Parameter
-
-    double start_time = xtime();
-    dgemm_64('N', 'N',
-          n, m, k,
-          alpha,
-          b[0], ldb,
-          a[0], lda,
-          beta,
-          c[0], ldc);
-
-    return xtime() - start_time;
+	while(loop_time < 3.0 || loopcount <= 2){
+		c = create_matrix(m,n);
+	    start_time = xtime();
+    	dgemm_64('N', 'N',
+    	      n, m, k,
+	          alpha,
+	          b[0], ldb,
+	          a[0], lda,
+	          beta,
+	          c[0], ldc);
+		loop_time += xtime() - start_time;
+		loopcount++;
+		free(c[0]);
+		free(c);
+	}
+    return loopcount;
 }
