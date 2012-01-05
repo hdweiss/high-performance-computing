@@ -44,12 +44,12 @@ void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
 int main(int argc, char** argv) {
     debug = 0;
 
-    int m = 100;
-    int n = 100;
-    int k = 100;
-    int loop_count = 5;
-    int limit = 10;
-	int s = 10;
+    int m = 11;
+    int n = 11;
+    int k = 10;
+    int loop_count = 1;
+    int limit = 1;
+	int s = 5;
 
     for(int i = 1; i <= limit; i++) {
         run_matrix_calc(m*i, n*i, k*i, loop_count, s);
