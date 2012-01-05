@@ -114,6 +114,13 @@ Matrix multiplication, why is it an important benchmark?
 \end_layout
 
 \begin_layout Standard
+Many physical problems can be reduced to systems of linear equations, thus
+ solved by linear algebra.
+ Matrix multiplications are very calculation intensive and are their for
+ the subject to many benchmarks for High performance computers.
+\end_layout
+
+\begin_layout Standard
 We are to implement and evaluate three different matrix-matrix multiplication
  function used in a High-Performance Computing system.
  The three different implementations are:
