@@ -87,7 +87,6 @@ double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) 
 	int sm = (sm_d - (int)sm_d) > 0? ((int)sm_d + 1) : (int)sm_d;
 	int sk = (sk_d - (int)sk_d) > 0? ((int)sk_d + 1) : (int)sk_d;
 	
-
 	for (p = 0; p < sm; p++ ) {
 		for (q = 0; q < sn; q++) {
 			//clear submatrix
