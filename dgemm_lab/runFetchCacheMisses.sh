@@ -2,7 +2,6 @@
 
 EXP_FILES='experiments/hpc*'
 FIND_COMMAND='find experiments/hpc* -maxdepth 0  -printf "%p$IFS"'
-OUTPUT_FILE='measure.dat'
 
 for file in $EXP_FILES
 do
