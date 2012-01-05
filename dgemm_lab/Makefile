@@ -18,6 +18,22 @@ realclean : clean
 
 depend:
 	makedepend -Y. *.c
+
+exp: cleanexp flops cache
+
+cleanexp:
+	rm -Rf experiments/*
+
+flops:
+	./runAnalyzerFlops.sh
+	./runFetchFlops.sh > flops.dat
+	gnuplot flops.p
+
+cache:
+	./runAnalyzerCacheMiss.sh
+	./runFetchCacheMisses.sh > cache.dat
+	gnuplot cache.p
+
 # DO NOT DELETE
 
 main.o: matrix.h xtime.h
