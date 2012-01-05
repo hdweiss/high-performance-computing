@@ -77,6 +77,16 @@ Due 6th of January 2012
 
 \begin_layout Section
 Summary
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Rasmus
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -86,7 +96,21 @@ In this report we will implement three different matrix-matrix multiplication
 \end_layout
 
 \begin_layout Section
-Statement of problem
+Introduction
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Rasmus
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Matrix multiplication, why is it an important benchmark?
 \end_layout
 
 \begin_layout Standard
@@ -109,45 +133,40 @@ A blocked matrix multiplication function, with the block size adjusted for
 \end_layout
 
 \begin_layout Standard
-Evaluation of the functions??
-\end_layout
-
-\begin_layout Standard
-(which will then be found in appropriate sections).
+The functions are evaluated by MFLOP/s to give an idea of the efficiency.
 \end_layout
 
 \begin_layout Section
-Description of hardware and software
+Theory
+\end_layout
+
+\begin_layout Subsection
+Matrix multiplication
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Rasmus
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The machines we have tested our functions on, are the 
-\noun on
-gbar
-\noun default
- linux servers, with 
-\noun on
-amd
-\noun default
- or 
-\noun on
-intel
-\noun default
- processors.
- The gbar has two different linux HPC servers.
+Multiplying two matrices 
+\begin_inset Formula $C=A\times B$
+\end_inset
+
+ can be done by the following simple algorithm: 
 \end_layout
 
 \begin_layout Standard
-For the DGEMM function we have used the SUN performance library.
-\end_layout
+\begin_inset Formula $C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}$
+\end_inset
 
-\begin_layout Standard
-Describe clearly what hardware and software are used and identify what is
- important to the present study.
-\end_layout
 
-\begin_layout Section
-Description of theory
 \end_layout
 
 \begin_layout Standard
@@ -158,33 +177,126 @@ Which choices have been made?
 What is used to verify correctness of the implemented code? Etc.
 \end_layout
 
+\begin_layout Subsection
+Simple_mm
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Rasmus
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+naive
+\end_layout
+
+\begin_layout Standard
+benchmark for improvements
+\end_layout
+
+\begin_layout Standard
+direct translation of math algorithm
+\end_layout
+
+\begin_layout Subsection
+Block_mm
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+faster by taking data locality into account
+\end_layout
+
+\begin_layout Standard
+best block size
+\end_layout
+
+\begin_layout Subsection
+DGEMM_mm
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Rasmus
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+less Flop in total compared to the naive version
+\end_layout
+
+\begin_layout Standard
+cache efficiency
+\end_layout
+
+\begin_layout Standard
+fortran trick
+\end_layout
+
 \begin_layout Section
-Description of algorithm
+Experimental setup
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Henning
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The simple matrix multiplication function has three nested loops for 
+measure points/how they are generated
 \end_layout
 
 \begin_layout Standard
-In how many ways can the loops of the naive algorithm be nested?
+looping inside the mm functions
 \end_layout
 
 \begin_layout Standard
-Which algorithm are you trying to implement? How have you verified your
- implemented program is doing the right thing? Describe.
+functionality of our scripts
 \end_layout
 
 \begin_layout Section
-Results
+Machine description
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 Always using suncc as compiler
 \end_layout
 
-\begin_layout Subsection*
-Machines Used
+\begin_layout Standard
+machine descriptions
 \end_layout
 
 \begin_layout Standard
@@ -192,10 +304,6 @@ Machines Used
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Caption
@@ -395,8 +503,82 @@ x86_64
 
 \end_layout
 
-\begin_layout Plain Layout
+\end_inset
 
+
+\end_layout
+
+\begin_layout Subsection
+Compilers
+\end_layout
+
+\begin_layout Standard
+version
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Flags
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Henning
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+xrestrict
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Henning
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+block_mm block size
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+loop order simple and blocked
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Henning
 \end_layout
 
 \end_inset
@@ -587,42 +769,6 @@ FLOP/s: 2 304 789 004
 \end_layout
 
 \end_deeper
-\begin_layout Subsection
-Naive matrix mult
-\end_layout
-
-\begin_layout Subsection
-Dgemm
-\end_layout
-
-\begin_layout Subsection
-Blocked matrix mult
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Present the important and relevant results of your computations and investigatio
-ns.
- Use tables and graphs and fill these with data that are interesting.
- For example, you might want to analyze the timing results of your algorithms
- by providing graphs of the rate of execution (operations/sec) as you vary
- the size of the problem.
- You might also want to analyze the rate you achieve compare do the theoretical
- peak performance rate of the processor to indicate how good the performance
- is.
- Make sure to discuss and interpret your results.
- How do they relate to your expectations? Can we do better? Etc.
- Comment on things that are obviously peculiar.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 Conclusions
 \end_layout
