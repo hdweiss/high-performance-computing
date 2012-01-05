@@ -1,6 +1,6 @@
 # Sample Makefile
 CC = suncc
-OPT = -g -fast -xlic_lib=sunperf
+OPT = -g -fast -xlic_lib=sunperf -xrestrict
 WARN = 
 CFLAGS = $(OPT) $(WARN)
 
@@ -25,13 +25,13 @@ cleanexp:
 	rm -Rf experiments/*
 
 flops:
-	./runAnalyzerFlops.sh
-	./runFetchFlops.sh | sort --general-numeric-sort > flops.dat
+	./runAnalyzerFlops.sh 2> /dev/null | grep -v WARNING
+	./fetchFlops.sh | sort --general-numeric-sort > flops.dat
 	gnuplot flops.p
 
 cache:
-	./runAnalyzerCacheMiss.sh
-	./runFetchCacheMisses.sh | sort --general-numeric-sort > cache.dat
+	./runAnalyzerCacheMiss.sh 2> /dev/null | grep -v WARNING
+	./fetchCacheMisses.sh | sort --general-numeric-sort > cache.dat
 	gnuplot cache.p
 
 # DO NOT DELETE

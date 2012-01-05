@@ -14,6 +14,11 @@ double** create_matrix(int row, int column) {
     return matrix;
 }
 
+void destroy_matrix(double** matrix) {
+    free(matrix[0]);
+    free(matrix);
+}
+
 void init_matrix(int row, int column, int scale_factor, double** matrix) {
     for(int i = 0; i < row; i++) {
         for(int j = 0; j < column; j++) {
@@ -65,22 +70,17 @@ int simple_mm(int m, int n, int k, double** a, double** b, double** c) {
 		}
 		loop_time += xtime() - start_time;
 		loopcount++;
-		free(c[0]);
-		free(c);
+        destroy_matrix(c);
 	}
     return loopcount;
 }
 
 double sub_mm(int p, int q, int r, int s, int m, int n, int k, double** a, double** b, double** c) {
-
-	int i, j, l;
-    
-	for(i = 0; (i < s) && ((i+p*s) < m); i++) {	
-        for(j = 0; (j < s) && ((j+q*s) < n); j++) {
-            for(l = 0; (l < s) && ((l+r*s) < k); l++) {
+	for(int i = 0; (i < s) && ((i+p*s) < m); i++) {	
+        for(int j = 0; (j < s) && ((j+q*s) < n); j++) {
+            for(int l = 0; (l < s) && ((l+r*s) < k); l++) {
                 c[i+p*s][j+q*s] = c[i+p*s][j+q*s] + a[i+p*s][l+r*s] * b[l+r*s][j+q*s];
             }
-
         }
     }
 
@@ -116,8 +116,7 @@ int block_mm(int m, int n, int k, double** a, double** b, double** c, int s) {
 		}
 		loop_time += xtime() - start_time;
 		loopcount++;
-		free(c[0]);
-		free(c);
+        destroy_matrix(c);
 	}
 	return loopcount;
 }
@@ -145,8 +144,7 @@ int dgemm_mm(int m, int n, int k, double** a, double** b, double** c) {
 	          c[0], ldc);
 		loop_time += xtime() - start_time;
 		loopcount++;
-		free(c[0]);
-		free(c);
+        destroy_matrix(c);
 	}
     return loopcount;
 }
