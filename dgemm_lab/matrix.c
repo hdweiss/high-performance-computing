@@ -62,35 +62,40 @@ double simple_mm(int m, int n, int k, double** a, double** b, double** c) {
     return xtime() - start_time;
 }
 
-double sub_mm(int p, int q, int r, int s, double** a, double** b, double** c) {
+double sub_mm(int p, int q, int r, int s, int m, int n, int k, double** a, double** b, double** c) {
 
-    for(int i = 0; i < s; i++) {
-		
-        for(int j = 0; j < s; j++) {
-
-            for(int l = 0; l < s; l++) {
+	int i, j, l;
+    
+	for(i = 0; (i < s) && ((i+p*s) < m); i++) {	
+        for(j = 0; (j < s) && ((j+q*s) < n); j++) {
+            for(l = 0; (l < s) && ((l+r*s) < k); l++) {
                 c[i+p*s][j+q*s] = c[i+p*s][j+q*s] + a[i+p*s][l+r*s] * b[l+r*s][j+q*s];
             }
+
         }
     }
+
 }
 
 double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) {
 	double start_time = xtime();
 	int p, q, r;
-	int sn = n/s;
-	int sm = m/s;
-	int sk = k/s;
+	double sn_d = (double)n/(double)s;
+	double sm_d = (double)m/(double)s;
+	double sk_d = (double)k/(double)s;
+	int sn = (sn_d - (int)sn_d) > 0? ((int)sn_d + 1) : (int)sn_d;
+	int sm = (sm_d - (int)sm_d) > 0? ((int)sm_d + 1) : (int)sm_d;
+	int sk = (sk_d - (int)sk_d) > 0? ((int)sk_d + 1) : (int)sk_d;
 	
 	for (p = 0; p < sm; p++ ) {
 		for (q = 0; q < sn; q++) {
 			//clear submatrix
 			// c(p,q) = 0
-//			init_zero(p, q, s, c);
+			//init_zero(p, q, s, c);
 			for (r = 0; r < sk; r++) {
 				//block multiplication
 				// c(p,q)
-				sub_mm(p, q, r, s, a, b, c);
+				sub_mm(p, q, r, s, m, n, k, a, b, c);
 				
 			}
 		}
