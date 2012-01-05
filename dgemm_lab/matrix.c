@@ -82,11 +82,11 @@ double block_mm(int m, int n, int k, double** a, double** b, double** c, int s) 
 	int sm = m/s;
 	int sk = k/s;
 	
-	for (p = 0; p < sn; p++ ) {
-		for (q = 0; q < sm; q++) {
+	for (p = 0; p < sm; p++ ) {
+		for (q = 0; q < sn; q++) {
 			//clear submatrix
 			// c(p,q) = 0
-			init_zero(p, q, s, c);
+//			init_zero(p, q, s, c);
 			for (r = 0; r < sk; r++) {
 				//block multiplication
 				// c(p,q)

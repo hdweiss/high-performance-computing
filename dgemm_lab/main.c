@@ -4,10 +4,11 @@
 
 int debug;
 
-void print_timing(double time_simple, double time_dgemm, int loopcount, int m, int n, int k) {
-
-    int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
-    printf("%i %f %f \n", matrix_size, time_simple/loopcount, time_dgemm/loopcount);
+void print_timing(double time_simple, double time_dgemm, double time_block, int loopcount, int m, int n, int k) {
+    if(debug) {
+        int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
+        printf("%i %f %f %f\n", matrix_size, time_simple/loopcount, time_dgemm/loopcount, time_block/loopcount);
+    }
 }
 
 void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
@@ -35,24 +36,30 @@ void run_matrix_calc(int m, int n, int k, int loopcount, int s) {
 		C = create_matrix(m, n);
         block_mm_time += block_mm(m, n, k, A, B, C, s);
         print_matrix(C, m, n, "C after block_mm");
-
     }
 
-    print_timing(simple_mm_time, gemm_mm_time, loopcount+1, m, n, k);
+    //print_timing(simple_mm_time, gemm_mm_time, block_mm_time, loopcount+1, m, n, k);
 }
 
 int main(int argc, char** argv) {
-    debug = 0;
+    debug = 1;
 
-    int m = 100;
-    int n = 100;
-    int k = 100;
-    int loop_count = 5;
-    int limit = 10;
-	int s = 10;
-
-    for(int i = 1; i <= limit; i++) {
-        run_matrix_calc(m*i, n*i, k*i, loop_count, s);
+    if(argc < 4) {
+        printf("Invaled number (%i) of arguments!\n", argc-1);
+        return 0;
     }
+        
+    int m = atoi(argv[1]);
+    int n = atoi(argv[2]);
+    int k = atoi(argv[3]);
+
+    int s = 1;
+    if(argc >= 5)
+        s = atoi(argv[4]);
+    
+    int loop_count = 5;
+
+    run_matrix_calc(m, n, k, loop_count, s);
+    printf("Ran matrix calculations with %i %i %i\n", m, n, k);
     return 0;
 }
