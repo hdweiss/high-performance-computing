@@ -1068,52 +1068,6 @@ The performance of simple_mm relates to the size of the different cache
  Even though the drop for the L1 cache is very insignificant.
 \end_layout
 
-\begin_layout Standard
-To see how the implementations performs
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename graph_cache.eps
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Cache misses of the three matrix-matrix multiplication implementations.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-When analyzing the DGEMM function we saw that number of floating point operation
-s where reduced to around half compared to the simple_mm.
- Furthermore the cache misses for the DGEMM was drastically reduced compared
- to the simple_mm function, we see the cache efficiency and the reduced
- number of floating point operations as the source of the performance advantage
- of around 10 times.
-\end_layout
-
 \begin_layout Section
 Conclusions
 \end_layout
