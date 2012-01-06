@@ -576,21 +576,45 @@ Compilers
 \end_layout
 
 \begin_layout Standard
-Flags
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Henning
-\end_layout
-
-\end_inset
-
-
+We compile our program using the suncc compiler using the following options
+\emph on
+ -fast, -xlic_lib=sunperf
+\emph default
+, 
+\emph on
+-xrestrict, -xO5 
+\emph default
+flags.
+ Additionally we use the 
+\emph on
+-xchip=opteron
+\emph default
+ flag on the Linux AMD machines to get the chip set optimizations.
+ Fast is a macro that enables many other optimization options and the 
+\emph on
+-xO5
+\emph default
+ enables the highest optimization level to enable good performance.
+ The 
+\emph on
+-xlic_lib=sunperf 
+\emph default
+specifies the linking against the Sun performance library which is used
+ for 
+\emph on
+DGEMM
+\emph default
+.
+ Finally the 
+\emph on
+-xrestrict 
+\emph default
+flags tells the compiler that we have no overlapping pointers in our code.
+ Overlapping pointers prevent the compiler from doing loop unrolling.
 \end_layout
 
 \begin_layout Standard
-xrestrict
+loop order simple and blocked
 \begin_inset Marginal
 status open
 
@@ -614,20 +638,6 @@ status open
 
 \begin_layout Plain Layout
 Evangelia
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-loop order simple and blocked
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Henning
 \end_layout
 
 \end_inset

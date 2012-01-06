@@ -109,7 +109,14 @@ int block_mm(int m, int n, int k, double** a, double** b, double** c, int s) {
 				for (r = 0; r < sk; r++) {
 					//block multiplication
 					// c(p,q)
-					sub_mm(p, q, r, s, m, n, k, a, b, c);
+	for(int i = 0; (i < s) && ((i+p*s) < m); i++) {	
+        for(int j = 0; (j < s) && ((j+q*s) < n); j++) {
+            for(int l = 0; (l < s) && ((l+r*s) < k); l++) {
+                c[i+p*s][j+q*s] = c[i+p*s][j+q*s] + a[i+p*s][l+r*s] * b[l+r*s][j+q*s];
+            }
+        }
+    }
+//					sub_mm(p, q, r, s, m, n, k, a, b, c);
 					
 				}
 			}
