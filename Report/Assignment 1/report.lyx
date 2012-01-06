@@ -1,42 +1,60 @@
-#LyX 1.6.10 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -44,31 +62,91 @@
 \begin_layout Title
 
 \noun on
-02614 High-Performance Computing
+Assignment 1: Matrix Multiplication
 \end_layout
 
 \begin_layout Author
 
 \noun on
-Assignment 1: Matrix Multiplication
+02614 High-Performance Computing
 \end_layout
 
 \begin_layout Date
 Due 6th of January 2012
 \end_layout
 
-\begin_layout Section
-Summary
-\begin_inset Marginal
+\begin_layout Standard
+\begin_inset ERT
 status open
 
 \begin_layout Plain Layout
-Rasmus
+
+
+\backslash
+vspace{1cm}
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\align center
+Henning Weiss - s062407
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{0.6cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Rasmus Bo Sørensen - s072080
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{0.6cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Evangelia Kasapaki - s114598
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Summary
 \end_layout
 
 \begin_layout Standard
@@ -79,16 +157,6 @@ In this report we will implement three different matrix-matrix multiplication
 
 \begin_layout Section
 Introduction
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Rasmus
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -134,16 +202,6 @@ name "sub:Matrix-multiplication"
 \end_inset
 
 Matrix multiplication
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Rasmus
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -155,8 +213,10 @@ Multiplying two matrices
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}\]
+\begin_inset Formula 
+\begin{equation}
+C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}\label{eq:a}
+\end{equation}
 
 \end_inset
 
@@ -194,16 +254,6 @@ This algorithm has the time complexity
 
 \begin_layout Subsection
 Simple_mm
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Rasmus
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -235,16 +285,6 @@ The simple algorithm has three nested loops, the two outer loops can be
 
 \begin_layout Subsection
 Block_mm
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -276,19 +316,29 @@ Block_mm function performs block matrix multiplication.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $A=\left[\begin{array}{cccc}
+\begin_inset Formula 
+\[
+A=\left[\begin{array}{cccc}
 A{}_{11} & A_{12} & ... & A_{1r}\\
 A_{21} & A_{22} & ... & A_{2r}\\
 ... & ... & ... & ...\\
-A_{p1} & A_{p2} & ... & A_{pr}\end{array}\right]$
+A_{p1} & A_{p2} & ... & A_{pr}
+\end{array}\right]
+\]
+
 \end_inset
 
-, 
-\begin_inset Formula $B=\left[\begin{array}{cccc}
+
+\begin_inset Formula 
+\[
+B=\left[\begin{array}{cccc}
 B_{11} & B_{12} & ... & B_{1q}\\
 B_{21} & B_{22} & ... & B_{2q}\\
 ... & ... & ... & ...\\
-B_{r1} & B_{r2} & ... & B_{rq}\end{array}\right]$
+B_{r1} & B_{r2} & ... & B_{rq}
+\end{array}\right]
+\]
+
 \end_inset
 
 
@@ -304,19 +354,34 @@ The multiplication product
 \end_inset
 
  block elements matrix 
-\begin_inset Formula $C=\left[\begin{array}{cccc}
+\begin_inset Formula 
+\[
+C=\left[\begin{array}{cccc}
 C{}_{11} & C_{12} & ... & C_{1q}\\
-C_{21} & C_{22} & ... & C_{2r}\\
+C_{21} & C_{22} & ... & C_{2q}\\
 ... & ... & ... & ...\\
-C_{p1} & C_{p2} & ... & C_{pq}\end{array}\right]$
+C_{p1} & C_{p2} & ... & C_{pq}
+\end{array}\right]
+\]
+
 \end_inset
 
-.
- Each submatrix is evaluated as 
-\begin_inset Formula $C_{ij}=\sum_{k=1}^{r}A_{ik}\times B_{kj}$
+Each submatrix 
+\begin_inset Formula $C_{ij}$
 \end_inset
 
-.
+is evaluated as seen in equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:a"
+
+\end_inset
+
+ varying k from 1 to r.
  
 \end_layout
 
@@ -325,10 +390,11 @@ The function is implemented according to this algorithm and has two nested
  loops to get each submatrix product.
  For each product requires a loop and a matrix multiplication and an addition
  inside the loop.
+ In total there are six nested loops.
 \end_layout
 
 \begin_layout Standard
-Since block matric multiplication is only performed on submatrices it takes
+Since block matrix multiplication is only performed on submatrices it takes
  advantage of data locality.
  Considering the memory hierarchy and size, it is expected to be faster
  than the simple version.
@@ -337,25 +403,20 @@ Since block matric multiplication is only performed on submatrices it takes
 \end_layout
 
 \begin_layout Standard
-faster by taking data locality into account
-\end_layout
-
-\begin_layout Standard
-best block size
-\end_layout
-
-\begin_layout Subsection
-DGEMM_mm
-\begin_inset Marginal
+\begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-Rasmus
+best block size
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+DGEMM_mm
 \end_layout
 
 \begin_layout Standard
@@ -365,14 +426,16 @@ The DGEMM function is a highly optimized matrix-matrix multiplication function
  row-wise manner of C.
  Because we are writing in C our wrapper must take care of the conversion
  between the C-style and the FORTRAN-style matrices.
- A matrix constructed in C style in interpreted as the transposed in FORTRAN.
+ A matrix constructed in C style is interpreted as the transposed in FORTRAN.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \begin{eqnarray}
+\begin_inset Formula 
+\begin{eqnarray}
 A_{C} & = & A_{F}^{T}\nonumber \\
 B_{C} & = & B_{F}^{T}\label{eq:1}\\
-C_{C} & = & C_{F}^{T}\nonumber \end{eqnarray}
+C_{C} & = & C_{F}^{T}\nonumber 
+\end{eqnarray}
 
 \end_inset
 
@@ -385,10 +448,12 @@ The FORTRAN function takes the three input arguments A, B and C.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \begin{eqnarray*}
+\begin_inset Formula 
+\begin{eqnarray*}
 C_{F} & = & A_{F}\times B_{F}\\
 C_{F}^{T} & = & (A_{F}\times B_{F})^{T}\\
-C_{F}^{T} & = & B_{F}^{T}\times A_{F}^{T}\end{eqnarray*}
+C_{F}^{T} & = & B_{F}^{T}\times A_{F}^{T}
+\end{eqnarray*}
 
 \end_inset
 
@@ -411,8 +476,10 @@ reference "eq:1"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-C_{C}=B_{C}\times A_{C}\]
+\begin_inset Formula 
+\[
+C_{C}=B_{C}\times A_{C}
+\]
 
 \end_inset
 
@@ -421,26 +488,11 @@ C_{C}=B_{C}\times A_{C}\]
 
 \begin_layout Standard
 Which means that we only need to swap the parameters of the FORTRAN function.
- When analyzing the DGEMM function we saw that number of floating point
- operations where reduced to around half compared to the simple_mm.
- Futthermore the cache misses for the DGEMM was drastically reduced compared
- to the simple_mm function, we see the cache efficiency and the reduced
- number of floating point operations as the source of the performance advantage
- of around 10 times.
+ 
 \end_layout
 
 \begin_layout Section
 Experimental setup
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Henning
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -479,42 +531,34 @@ collect
 \end_layout
 
 \begin_layout Standard
-Our main program several parameters as input, allowing us to control the
- size of the matrices and the block size used by the block matrix-multiply
+Our main program takes several parameters as input, allowing us to control
+ the size of the matrices and the block size used by the block matrix-multiply
  algorithm.
  This allowed us to write a wrapper script that varies the size of the matrices
- generated, making it easy to generate many measurements.
+ created, making it easy to generate many measurements.
  
 \emph on
 Collect
 \emph default
- will generate files binary files that can be accessed by 
+ will generate several binary files containing the measurements, which can
+ be accessed by 
 \emph on
 er_print
 \emph default
- and further manipulation by bash scripts, awk and gnuplot allows us to
- fully automatically generate performance graphs, which are presented in
- the following sections.
+.
+ Further manipulation by bash scripts, awk and gnuplot allows us to fully
+ automatically generate performance graphs, which are presented in the following
+ sections.
 \end_layout
 
 \begin_layout Section
 Machine description
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
 We used two types of machines for the performance evaluation, AMD and Intel.
- Both machines are x86 64-bits processors.
- AMD machine has 2 AMD Opteron 6168 processors with a total of 24 cores
+ Both machines are 64-bits processors of x86 architecture.
+ The AMD machine has 2 AMD Opteron 6168 processors with a total of 24 cores
  reaching 0.8-1.9GHz.
  It has 64KB of L1 cache and 512KB of L2 on each core.
  It also has 12MB L3 cache on each processor.
@@ -522,8 +566,9 @@ We used two types of machines for the performance evaluation, AMD and Intel.
  reaching 1.6-2.67GHZ.
  It has 32KB of L1 cache and 256KB of L2 cache on each core.
  It also has a L3 cache of 8MB per processor.
- The both have seperate instaruction and data L1 caches, while cache is
- unified in L2 and L3.
+ The both have separate instruction and data L1 caches, while cache is unified
+ in L2 and L3.
+ Both machines run Linux 2.6.32 as OS.
 \end_layout
 
 \begin_layout Standard
@@ -532,33 +577,6 @@ For the experiments on performance evaluation on variable matrix size we
  For variable block size we used both machines.
  The difference in the memory hierarchy sizes is considered to affect the
  performance of the function by changing the block size.
-\end_layout
-
-\begin_layout Standard
-Both machines are x86_64 and run Linux 2.6.32 as OS.
- The compiler that was used was suncc.
-\end_layout
-
-\begin_layout Standard
-Always using suncc as compiler
-\end_layout
-
-\begin_layout Standard
-compiler version
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-machine descriptions
 \end_layout
 
 \begin_layout Standard
@@ -571,7 +589,8 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Machines 
+Machine configuration for the performed experiments.
+ 
 \end_layout
 
 \end_inset
@@ -583,7 +602,7 @@ Machines
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="7">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -596,7 +615,7 @@ Machines
 \begin_inset Text
 
 \begin_layout Plain Layout
-Name
+Vendor
 \end_layout
 
 \end_inset
@@ -661,7 +680,7 @@ Clock
 \begin_inset Text
 
 \begin_layout Plain Layout
-n-62-24-9
+AMD
 \end_layout
 
 \end_inset
@@ -726,7 +745,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-n-62-23-1
+Intel
 \end_layout
 
 \end_inset
@@ -780,7 +799,7 @@ x84_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.67
+2.67 GHz
 \end_layout
 
 \end_inset
@@ -803,7 +822,8 @@ Compilers
 \end_layout
 
 \begin_layout Standard
-We compile our program using the suncc compiler using the following options
+We compile our program using the Sun C 5.10 Linux_i386(suncc) compiler using
+ the following options
 \emph on
  -fast, -xlic_lib=sunperf
 \emph default
@@ -853,17 +873,30 @@ Results
 \end_layout
 
 \begin_layout Standard
-block_mm block size
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
+We now evaluate the three matrix-matrix multiplication functions we have
+ implemented.
+ To evaluate the performance of the block_mm we need to find a good block
+ size for the cache.
+ To find a good block size for the block_mm we vary the block size for a
+ fixed size matrix-matrix multiplication.
+ In figure
+\begin_inset space ~
 \end_inset
 
 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Varying-the-dimension"
+
+\end_inset
+
+ we have plotted the performance of the block_mm when varying the dimension
+ of the block size.
+ For the experiments we used a fixed matrix of size 
+\begin_inset Formula $1000\times1000$
+\end_inset
+
+ we vary the block size from 10 to 150 in steps of 5.
 \end_layout
 
 \begin_layout Standard
@@ -873,13 +906,7 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename graph_blocks.eps
 
@@ -888,18 +915,91 @@ status open
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
+\begin_layout Plain Layout
+\begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Varying-the-dimension"
+
+\end_inset
+
+Varying the dimension of the block of the block_mm.
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Varying-the-dimension"
+
+\end_inset
+
+ we see that the AMD run has its maximum around 60.
+ The block dimension of 60 allows for 2 block to be placed in the cache
+ at once.
+ This comes from the fact that AMD has 64 Kb of L1 cache and two blocks.
+ Two blocks requires: 
+\begin_inset Formula 
+\[
+60\text{²[elements]}*8\text{[bytes]}*2\text{[blocks]}=57.600\text{[Kb]}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When two blocks are placed in the L1 cache the program can do the multiplication
+ of those two blocks right from the cache, writing the result back into
+ memory reducing cache misses.
+ 
+\end_layout
+
+\begin_layout Standard
+The AMD curve drops right after the block dimension reaches 65.
+ This is because the two block no longer fits in the L1 cache.
+ There is also a second drop right after the block dimension reaches 85,
+ which is where one block takes up the entire L1 cache.
+\end_layout
+
+\begin_layout Standard
+The Intel curve follows the same trend as the AMD curve, but with less variation.
+ The reduced variation could be explained by a better cache prefetching
+ of the Intel processor.
+\end_layout
+
+\begin_layout Standard
+With the block size set to 60 we now evaluate the performance of all the
+ three functions.
+ The performance of the three functions can be seen in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:flops"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -922,7 +1022,14 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:flops"
 
+\end_inset
+
+Floating point performance of the three matrix-matrix multiplication implementat
+ions.
 \end_layout
 
 \end_inset
@@ -933,6 +1040,27 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We can see that the library function DGEMM outperforms our homemade implementati
+ons by far.
+ This is because the DGEMM function is highly optimized.
+ The simple_mm performs slightly better than the block_mm, even though the
+ block_mm is optimized for the cache size.
+ The extra overhead in form of more nested loops and a larger number of
+ branches could explain the performance difference between simple_mm and
+ block_mm.
+\end_layout
+
+\begin_layout Standard
+The performance of simple_mm drops when the matrix size reaches the size
+ of the L1 cache, opposed to the performance of the block_mm which is optimized
+ for the size of the cache.
+\end_layout
+
+\begin_layout Standard
+To see how the implementations performs
 \end_layout
 
 \begin_layout Standard
@@ -955,7 +1083,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-
+Cache misses of the three matrix-matrix multiplication implementations.
 \end_layout
 
 \end_inset
@@ -966,6 +1094,15 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+When analyzing the DGEMM function we saw that number of floating point operation
+s where reduced to around half compared to the simple_mm.
+ Furthermore the cache misses for the DGEMM was drastically reduced compared
+ to the simple_mm function, we see the cache efficiency and the reduced
+ number of floating point operations as the source of the performance advantage
+ of around 10 times.
 \end_layout
 
 \begin_layout Section
@@ -977,20 +1114,6 @@ We have shown the three different implementation of the matrix-matrix multiplica
 tion functions, and evaluated the performance of them.
  We have shown that our implementations of the function cannot compete with
  a highly optimized library function of an HPC library.
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-2"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section*
-Appendix
 \end_layout
 
 \end_body
