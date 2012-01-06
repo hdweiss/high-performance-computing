@@ -5,9 +5,12 @@ I didn't know your email addresses and I couln't get ahold of them
 through github... I have worked on cleaning up the scripts and the
 program and have tried to get more performance out of block_mm. It
 seems like that it now sometimes performs as good as simple_mm, but
-usually only somewhat worse than simple_mm, which is probably caused
-by turning on -xrestrict and -xO5 (I'm not sure). You probably want to
-play around with the block size some more to get the right flop graph.
+usually only somewhat worse than simple_mm, which is probably because
+I moved the function body of sub_mm into block_mm to allow some more
+aggressive optimizations compiler optimizations. 
+
+You probably want to play around with the block size some more to get
+the right flop and cache graphs.
 
 Also you can see that I have added the blocksize/MFLOPS graphing
 functions. The graphs that come out of that look really wierd
