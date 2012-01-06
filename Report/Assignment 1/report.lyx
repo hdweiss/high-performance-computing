@@ -151,8 +151,12 @@ Summary
 
 \begin_layout Standard
 In this report we will implement three different matrix-matrix multiplication
- functions and evaluate the performance of the functions.
+ functions and evaluate the performance of the functions in the number of
+ floating point operations per second.
  The functions use different algorithms for multiplying the two matrices.
+ The performance evaluation is done using the Analyzer from the Sun Studio.
+ We have visualized the results of the performance evaluation in graphs,
+ which are presented in this report.
 \end_layout
 
 \begin_layout Section
@@ -281,6 +285,8 @@ reference "sub:Matrix-multiplication"
 \begin_layout Standard
 The simple algorithm has three nested loops, the two outer loops can be
  interchanged and the algorithm still reaches the correct result.
+ The compiler can interchange these loops to optimize the memory accesses
+ for the cache.
 \end_layout
 
 \begin_layout Subsection
@@ -403,16 +409,11 @@ Since block matrix multiplication is only performed on submatrices it takes
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-best block size
-\end_layout
-
-\end_inset
-
-
+The block size is expected to give a better performance when two input blocks
+ fit in the cache at once.
+ This is the case when matrices are larger than the cache size, for small
+ sizes of matrices the block size does not affect the performance.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -1044,17 +1045,25 @@ ions.
 We can see that the library function DGEMM outperforms our homemade implementati
 ons by far.
  This is because the DGEMM function is highly optimized.
- The simple_mm performs slightly better than the block_mm, even though the
- block_mm is optimized for the cache size.
- The extra overhead in form of more nested loops and a larger number of
- branches could explain the performance difference between simple_mm and
- block_mm.
+ The simple_mm performs slightly better than the block_mm for smaller matrix
+ sizes.
+ When the matrix sizes become larger the block_mm becomes more efficient
+ than the simple_mm.
+ The extra overhead in block_mm, in form of more nested loops and a larger
+ number of branches, could explain the performance difference between simple_mm
+ and block_mm for small matrix sizes.
 \end_layout
 
 \begin_layout Standard
-The performance of simple_mm drops when the matrix size reaches the size
- of the L1 cache, opposed to the performance of the block_mm which is optimized
- for the size of the cache.
+We can see that our own implementations will never be as efficient as the
+ DGEMM library function.
+\end_layout
+
+\begin_layout Standard
+The performance of simple_mm relates to the size of the different cache
+ levels.
+ The performance can be seen to drop at the cache level sizes.
+ Even though the drop for the L1 cache is very insignificant.
 \end_layout
 
 \begin_layout Standard
@@ -1112,6 +1121,11 @@ We have shown the three different implementation of the matrix-matrix multiplica
 tion functions, and evaluated the performance of them.
  We have shown that our implementations of the function cannot compete with
  a highly optimized library function of an HPC library.
+ However different implementations that take advantage of data locality
+ and machine properties can affect performance.
+ The blocking matrix-matrix multiplication algorithm is faster for greater
+ matrix sizes, but it never reaches the performance of the DGEMM library
+ function.
 \end_layout
 
 \end_body
