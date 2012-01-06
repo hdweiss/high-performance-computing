@@ -531,22 +531,24 @@ collect
 \end_layout
 
 \begin_layout Standard
-Our main program several parameters as input, allowing us to control the
- size of the matrices and the block size used by the block matrix-multiply
+Our main program takes several parameters as input, allowing us to control
+ the size of the matrices and the block size used by the block matrix-multiply
  algorithm.
  This allowed us to write a wrapper script that varies the size of the matrices
- generated, making it easy to generate many measurements.
+ created, making it easy to generate many measurements.
  
 \emph on
 Collect
 \emph default
- will generate files binary files that can be accessed by 
+ will generate several binary files containing the measurements, which can
+ be accessed by 
 \emph on
 er_print
 \emph default
- and further manipulation by bash scripts, awk and gnuplot allows us to
- fully automatically generate performance graphs, which are presented in
- the following sections.
+.
+ Further manipulation by bash scripts, awk and gnuplot allows us to fully
+ automatically generate performance graphs, which are presented in the following
+ sections.
 \end_layout
 
 \begin_layout Section
