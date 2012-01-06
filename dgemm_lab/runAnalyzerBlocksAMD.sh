@@ -4,7 +4,7 @@ module swap studio/12u3b
 EXP_NAME=experiments/blocks
 COLLECT_CMD='/opt/oracle/solstudiodev/lib/analyzer/lib/../../../bin/collect'
 
-MATRIX_SIZE=300
+MATRIX_SIZE=1000
 
 rm -Rf $EXP_NAME.*
 
