@@ -1,60 +1,42 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 1.6.10 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
-\maintain_unincluded_children false
 \language english
-\language_package default
 \inputencoding auto
-\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
-\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
-\default_output_format default
-\output_sync 0
-\bibtex_command default
-\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
-\use_mhchem 1
-\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
-\use_indices false
 \paperorientation portrait
-\suppress_date false
-\use_refstyle 1
-\index Index
-\shortcut idx
-\color #008000
-\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\paragraph_indentation default
+\defskip medskip
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\html_math_output 0
-\html_css_as_file 0
-\html_be_strict false
+\author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -173,10 +155,8 @@ Multiplying two matrices
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\[
-C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}
-\]
+\begin_inset Formula \[
+C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}\]
 
 \end_inset
 
@@ -268,6 +248,95 @@ Evangelia
 \end_layout
 
 \begin_layout Standard
+Block_mm function performs block matrix multiplication.
+ Matrices 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ are partitioned in a number of submatrices, i.e.
+ blocks, and the product is evaluated involving only operations on the smaller
+ submatrices.
+ For block dimension size 
+\begin_inset Formula $S$
+\end_inset
+
+ matrices 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ are partitioned in blocks as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $A=\left[\begin{array}{cccc}
+A{}_{11} & A_{12} & ... & A_{1r}\\
+A_{21} & A_{22} & ... & A_{2r}\\
+... & ... & ... & ...\\
+A_{p1} & A_{p2} & ... & A_{pr}\end{array}\right]$
+\end_inset
+
+, 
+\begin_inset Formula $B=\left[\begin{array}{cccc}
+B_{11} & B_{12} & ... & B_{1q}\\
+B_{21} & B_{22} & ... & B_{2q}\\
+... & ... & ... & ...\\
+B_{r1} & B_{r2} & ... & B_{rq}\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The multiplication product 
+\begin_inset Formula $C$
+\end_inset
+
+ is formed as the 
+\begin_inset Formula $p\times q$
+\end_inset
+
+ block elements matrix 
+\begin_inset Formula $C=\left[\begin{array}{cccc}
+C{}_{11} & C_{12} & ... & C_{1q}\\
+C_{21} & C_{22} & ... & C_{2r}\\
+... & ... & ... & ...\\
+C_{p1} & C_{p2} & ... & C_{pq}\end{array}\right]$
+\end_inset
+
+.
+ Each submatrix is evaluated as 
+\begin_inset Formula $C_{ij}=\sum_{k=1}^{r}A_{ik}\times B_{kj}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The function is implemented according to this algorithm and has two nested
+ loops to get each submatrix product.
+ For each product requires a loop and a matrix multiplication and an addition
+ inside the loop.
+\end_layout
+
+\begin_layout Standard
+Since block matric multiplication is only performed on submatrices it takes
+ advantage of data locality.
+ Considering the memory hierarchy and size, it is expected to be faster
+ than the simple version.
+ By choosing a good block size the memory hierarchy could be effectively
+ exploited resulting in less cache misses and better performance.
+\end_layout
+
+\begin_layout Standard
 faster by taking data locality into account
 \end_layout
 
@@ -300,12 +369,10 @@ The DGEMM function is a highly optimized matrix-matrix multiplication function
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray}
+\begin_inset Formula \begin{eqnarray}
 A_{C} & = & A_{F}^{T}\nonumber \\
 B_{C} & = & B_{F}^{T}\label{eq:1}\\
-C_{C} & = & C_{F}^{T}\nonumber 
-\end{eqnarray}
+C_{C} & = & C_{F}^{T}\nonumber \end{eqnarray}
 
 \end_inset
 
@@ -318,12 +385,10 @@ The FORTRAN function takes the three input arguments A, B and C.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
+\begin_inset Formula \begin{eqnarray*}
 C_{F} & = & A_{F}\times B_{F}\\
 C_{F}^{T} & = & (A_{F}\times B_{F})^{T}\\
-C_{F}^{T} & = & B_{F}^{T}\times A_{F}^{T}
-\end{eqnarray*}
+C_{F}^{T} & = & B_{F}^{T}\times A_{F}^{T}\end{eqnarray*}
 
 \end_inset
 
@@ -346,10 +411,8 @@ reference "eq:1"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\[
-C_{C}=B_{C}\times A_{C}
-\]
+\begin_inset Formula \[
+C_{C}=B_{C}\times A_{C}\]
 
 \end_inset
 
@@ -449,6 +512,34 @@ Evangelia
 \end_layout
 
 \begin_layout Standard
+We used two types of machines for the performance evaluation, AMD and Intel.
+ Both machines are x86 64-bits processors.
+ AMD machine has 2 AMD Opteron 6168 processors with a total of 24 cores
+ reaching 0.8-1.9GHz.
+ It has 64KB of L1 cache and 512KB of L2 on each core.
+ It also has 12MB L3 cache on each processor.
+ Intel machine has 2 Intel Xeon X5550 processors with a total of 8 cores
+ reaching 1.6-2.67GHZ.
+ It has 32KB of L1 cache and 256KB of L2 cache on each core.
+ It also has a L3 cache of 8MB per processor.
+ The both have seperate instaruction and data L1 caches, while cache is
+ unified in L2 and L3.
+\end_layout
+
+\begin_layout Standard
+For the experiments on performance evaluation on variable matrix size we
+ used the AMD machine.
+ For variable block size we used both machines.
+ The difference in the memory hierarchy sizes is considered to affect the
+ performance of the function by changing the block size.
+\end_layout
+
+\begin_layout Standard
+Both machines are x86_64 and run Linux 2.6.32 as OS.
+ The compiler that was used was suncc.
+\end_layout
+
+\begin_layout Standard
 Always using suncc as compiler
 \end_layout
 
@@ -491,8 +582,9 @@ Machines
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="6">
-<features tabularvalignment="middle">
+<lyxtabular version="3" rows="3" columns="7">
+<features>
+<column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -531,7 +623,16 @@ Arch
 \begin_inset Text
 
 \begin_layout Plain Layout
-# of CPUs
+# of cores
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+L1 Cache
 \end_layout
 
 \end_inset
@@ -596,6 +697,15 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
+64kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 512kb
 \end_layout
 
@@ -616,7 +726,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+n-62-23-1
 \end_layout
 
 \end_inset
@@ -625,7 +735,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Linux 2.6.32
 \end_layout
 
 \end_inset
@@ -634,7 +744,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+x84_64
 \end_layout
 
 \end_inset
@@ -643,7 +753,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+8
 \end_layout
 
 \end_inset
@@ -652,7 +762,16 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
+32kb
+\end_layout
 
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+256kb
 \end_layout
 
 \end_inset
@@ -661,7 +780,7 @@ x86_64
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2.67
 \end_layout
 
 \end_inset
@@ -754,6 +873,42 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graph_blocks.eps
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename graph_flops.eps
@@ -825,7 +980,6 @@ tion functions, and evaluated the performance of them.
 \end_layout
 
 \begin_layout Bibliography
-\labelwidthstring References
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-2"

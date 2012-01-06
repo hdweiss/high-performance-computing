@@ -11,7 +11,7 @@ do
 
     echo $file | awk -F. {' printf "%i ", $2'};
 
-    cat $ER_OUT | grep simple_mm | awk {' time=$2; flop=$4; printf "%.1f " , '$FLOPS_CALC};
+    cat $ER_OUT | grep block_mm | awk {' time=$2; flop=$4; printf "%.1f " , '$FLOPS_CALC};
 
     printf "\n"
     rm -f $ER_OUT

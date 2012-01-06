@@ -36,7 +36,7 @@ cache:
 	gnuplot cache.p
 
 blocks:
-	./runAnalyzerBlocks.sh 2> /dev/null | grep -v WARNING
+	./runAnalyzerBlocksAMD.sh 2> /dev/null | grep -v WARNING
 	./fetchBlocks.sh | sort --general-numeric-sort > blocks.dat
 	gnuplot blocks.p	
 
