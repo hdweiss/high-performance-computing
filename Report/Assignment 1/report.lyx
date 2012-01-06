@@ -722,17 +722,11 @@ flags tells the compiler that we have no overlapping pointers in our code.
 \end_layout
 
 \begin_layout Standard
-loop order simple and blocked
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Henning
-\end_layout
-
-\end_inset
-
-
+When using the Sun studio analyzer, it is shown that the row and column
+ loops in our functions are interchanged and the loops are unrolled up to
+ eight times to increase performance.
+ Additionally pre-fetching is enabled automatically in the compiler, allowing
+ us to circumvent some of the cache misses.
 \end_layout
 
 \begin_layout Section
@@ -746,20 +740,6 @@ status open
 
 \begin_layout Plain Layout
 Evangelia
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-loop order simple and blocked
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Henning
 \end_layout
 
 \end_inset
