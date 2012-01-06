@@ -17,4 +17,7 @@ functions. The graphs that come out of that look really wierd
 sometimes and I don't quite know what to make of them. The peak block
 size is apparently around 30.
 
+I also added a flag to the makefile that compiles the executable
+optimized for opteron. Keep that in mind when testing on other machines.
+
 Henning
