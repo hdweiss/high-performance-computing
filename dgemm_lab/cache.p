@@ -5,6 +5,7 @@ set out 'graph_cache.eps'
 set title "Cache Misses"
 set xlabel "Matrix Sizes [KB]"
 set ylabel "Cache misses/s [Cache misses / 1000]"
+set logscale x
 
 plot  "cache.dat" using 1:2 title 'Simple\_mm' w linespoints, \
       "cache.dat" using 1:4 title 'Block\_mm' w linespoints, \
