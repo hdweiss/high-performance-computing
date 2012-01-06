@@ -4,7 +4,7 @@ module swap studio/12u3b
 EXP_NAME=experiments/flops
 COLLECT_CMD='/opt/oracle/solstudiodev/lib/analyzer/lib/../../../bin/collect'
 
-BLOCK_SIZE=16
+BLOCK_SIZE=28
 
 rm -Rf $EXP_NAME.*
 

@@ -1,6 +1,7 @@
 # Sample Makefile
 CC = suncc
-OPT = -g -fast -xlic_lib=sunperf -xrestrict
+CHIP = -xchip=opteron
+OPT = -g -fast -xlic_lib=sunperf -xrestrict -xO5 $(CHIP)
 WARN = 
 CFLAGS = $(OPT) $(WARN)
 
@@ -19,7 +20,7 @@ realclean : clean
 depend:
 	makedepend -Y. *.c
 
-exp: cleanexp flops cache
+exp: cleanexp flops cache blocks
 
 cleanexp:
 	rm -Rf experiments/*
@@ -33,6 +34,11 @@ cache:
 	./runAnalyzerCacheMiss.sh 2> /dev/null | grep -v WARNING
 	./fetchCacheMisses.sh | sort --general-numeric-sort > cache.dat
 	gnuplot cache.p
+
+blocks:
+	./runAnalyzerBlocks.sh 2> /dev/null | grep -v WARNING
+	./fetchBlocks.sh | sort --general-numeric-sort > blocks.dat
+	gnuplot blocks.p	
 
 # DO NOT DELETE
 
