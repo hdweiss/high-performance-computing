@@ -5,14 +5,15 @@
 int debug;
 
 void print_timing(double simple_count, double dgemm_count, double block_count, int m, int n, int k) {
-    //if(debug) {
-//        int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
-	FILE *file;
-	file = fopen("experiments/counts.txt","a+");
+    if(debug) {
+        int matrix_size = ((m*n + n*k + k*m) * sizeof(double)) / 1024;
 
-    fprintf(file, "%i %i %i %i\n", m, simple_count, dgemm_count, block_count);
-	fclose(file);
-    //}
+        /* FILE *file; */
+        /* file = fopen("experiments/counts.txt","a+"); */
+        
+        /* fprintf(file, "%i %i %i %i\n", m, simple_count, dgemm_count, block_count); */
+        /* fclose(file); */
+    }
 }
 
 void run_matrix_calc(int m, int n, int k, int s) {
@@ -29,16 +30,14 @@ void run_matrix_calc(int m, int n, int k, int s) {
 	double block_mm_count = 0;
     
     double** C;
-    simple_mm_count = simple_mm(m, n, k, A, B, C);
 
+    simple_mm_count = simple_mm(m, n, k, A, B, C);
     print_matrix(C, m, n, "C after simple_mm");
 
 	gemm_mm_count = dgemm_mm(m, n, k, A, B, C);
-
     print_matrix(C, m, n, "C after dgemm_mm");
 
     block_mm_count = block_mm(m, n, k, A, B, C, s);
-
     print_matrix(C, m, n, "C after block_mm");
 
 	print_timing(simple_mm_count, gemm_mm_count, block_mm_count, m, n, k);
@@ -63,6 +62,7 @@ int main(int argc, char** argv) {
     int loop_count = 5;
 
     run_matrix_calc(m, n, k, s);
-    printf("Ran matrix calculations with %i %i %i %i\n", m, n, k, s);
+    //printf("Ran matrix calculations with %i %i %i %i\n", m, n, k, s);
+
     return 0;
 }

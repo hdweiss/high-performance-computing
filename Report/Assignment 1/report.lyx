@@ -110,19 +110,15 @@ Rasmus
 \end_layout
 
 \begin_layout Standard
-Matrix multiplication, why is it an important benchmark?
-\end_layout
-
-\begin_layout Standard
 Many physical problems can be reduced to systems of linear equations, thus
- solved by linear algebra.
- Matrix multiplications are very calculation intensive and are their for
- the subject to many benchmarks for High performance computers.
+ they can be solved efficiently with linear algebra.
+ Matrix multiplications are very calculation intensive and therefore they
+ are a good benchmark for HPC systems.
 \end_layout
 
 \begin_layout Standard
 We are to implement and evaluate three different matrix-matrix multiplication
- function used in a High-Performance Computing system.
+ function used in a HPC system.
  The three different implementations are:
 \end_layout
 
@@ -140,7 +136,8 @@ A blocked matrix multiplication function, with the block size adjusted for
 \end_layout
 
 \begin_layout Standard
-The functions are evaluated by MFLOP/s to give an idea of the efficiency.
+The functions are evaluated in MFLOP/s as a function of memory footprint,
+ to give an idea of the efficiency and to compare.
 \end_layout
 
 \begin_layout Section
@@ -148,6 +145,12 @@ Theory
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Matrix-multiplication"
+
+\end_inset
+
 Matrix multiplication
 \begin_inset Marginal
 status open
@@ -170,18 +173,43 @@ Multiplying two matrices
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}$
+\begin_inset Formula 
+\[
+C_{ij}=\sum_{k=1}^{p}A_{ik}\cdot B_{kj}
+\]
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-Which choices have been made?
-\end_layout
+This algorithm has the time complexity 
+\begin_inset Formula $\mathcal{O}(n^{3})$
+\end_inset
 
-\begin_layout Standard
-What is used to verify correctness of the implemented code? Etc.
+, for 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ being squared matrices.
+ Whereas an matrix addition has the time complexity 
+\begin_inset Formula $\mathcal{O}(n^{2})$
+\end_inset
+
+, for 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ being squared matrices.
 \end_layout
 
 \begin_layout Subsection
@@ -199,15 +227,30 @@ Rasmus
 \end_layout
 
 \begin_layout Standard
-naive
+The simple_mm function uses the algorithm described in section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Matrix-multiplication"
+
+\end_inset
+
+.
+ This algorithm is very easy to understand, mostly because it is similar
+ to the way we multiply matrices by hand.
+ The simple_mm is therefore a good baseline for evaluation the performance
+ of other implementation.
+ An easy optimization of our simple_mm is to check whether an element in
+ the current row is zero, in this case there is no need to go through all
+ the elements in the corresponding column.
 \end_layout
 
 \begin_layout Standard
-benchmark for improvements
-\end_layout
-
-\begin_layout Standard
-direct translation of math algorithm
+The simple algorithm has three nested loops, the two outer loops can be
+ interchanged and the algorithm still reaches the correct result.
 \end_layout
 
 \begin_layout Subsection
@@ -247,15 +290,80 @@ Rasmus
 \end_layout
 
 \begin_layout Standard
-less Flop in total compared to the naive version
+The DGEMM function is a highly optimized matrix-matrix multiplication function
+ written in FORTRAN.
+ FORTRAN saves data in multidimensional arrays column-wise compared to the
+ row-wise manner of C.
+ Because we are writing in C our wrapper must take care of the conversion
+ between the C-style and the FORTRAN-style matrices.
+ A matrix constructed in C style in interpreted as the transposed in FORTRAN.
 \end_layout
 
 \begin_layout Standard
-cache efficiency
+\begin_inset Formula 
+\begin{eqnarray}
+A_{C} & = & A_{F}^{T}\nonumber \\
+B_{C} & = & B_{F}^{T}\label{eq:1}\\
+C_{C} & = & C_{F}^{T}\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-fortran trick
+The FORTRAN function takes the three input arguments A, B and C.
+ Transposing the output of the function to get the desired matrix implies:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+C_{F} & = & A_{F}\times B_{F}\\
+C_{F}^{T} & = & (A_{F}\times B_{F})^{T}\\
+C_{F}^{T} & = & B_{F}^{T}\times A_{F}^{T}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using the equations
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:1"
+
+\end_inset
+
+ gives us the favorable result:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C_{C}=B_{C}\times A_{C}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Which means that we only need to swap the parameters of the FORTRAN function.
+ When analyzing the DGEMM function we saw that number of floating point
+ operations where reduced to around half compared to the simple_mm.
+ Futthermore the cache misses for the DGEMM was drastically reduced compared
+ to the simple_mm function, we see the cache efficiency and the reduced
+ number of floating point operations as the source of the performance advantage
+ of around 10 times.
 \end_layout
 
 \begin_layout Section
@@ -273,15 +381,57 @@ Henning
 \end_layout
 
 \begin_layout Standard
-measure points/how they are generated
+We have used the Sun studio collect tool to generate our results.
+ The collect tool allows us to get a summary of time spent in each function
+ without the need for modifications to the program, enabling us to get fairly
+ good performance measures.
+ Additionally the tool allows us to query the hardware performance counters
+ of the CPU to obtain supplemental performance data.
+ We have used this facility to query the 
+\begin_inset Quotes eld
+\end_inset
+
+fp_ops
+\begin_inset Quotes erd
+\end_inset
+
+ (total floating point operations) and the data cache misses counters.
 \end_layout
 
 \begin_layout Standard
-looping inside the mm functions
+The matrix multiplication subroutines must run for a couple of seconds to
+ allow 
+\emph on
+collect
+\emph default
+ to query the program and get the measurements.
+ For this purpose we have created loops around the matrix calculation functions
+ in our program that achieve a runtime of at least three seconds for each
+ of the three algorithms.
+ The number of times the algorithms runs may vary, but by normalizing the
+ performance counters with the actual time spent we can generate comparable
+ results.
+ As a positive side effect this will give us an average for all data generated
+ of our functions.
 \end_layout
 
 \begin_layout Standard
-functionality of our scripts
+Our main program several parameters as input, allowing us to control the
+ size of the matrices and the block size used by the block matrix-multiply
+ algorithm.
+ This allowed us to write a wrapper script that varies the size of the matrices
+ generated, making it easy to generate many measurements.
+ 
+\emph on
+Collect
+\emph default
+ will generate files binary files that can be accessed by 
+\emph on
+er_print
+\emph default
+ and further manipulation by bash scripts, awk and gnuplot allows us to
+ fully automatically generate performance graphs, which are presented in
+ the following sections.
 \end_layout
 
 \begin_layout Section
@@ -300,6 +450,20 @@ Evangelia
 
 \begin_layout Standard
 Always using suncc as compiler
+\end_layout
+
+\begin_layout Standard
+compiler version
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+Evangelia
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -520,20 +684,6 @@ Compilers
 \end_layout
 
 \begin_layout Standard
-version
-\begin_inset Marginal
-status open
-
-\begin_layout Plain Layout
-Evangelia
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Flags
 \begin_inset Marginal
 status open
@@ -593,145 +743,27 @@ Henning
 
 \end_layout
 
-\begin_layout Subsection*
-Cache misses
-\end_layout
-
 \begin_layout Standard
-Matrix sizes: 23437 for 5 iterations
-\end_layout
-
-\begin_layout Itemize
-Simple:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Time: 4.735780
-\end_layout
-
-\begin_layout Itemize
-L1 D-Cache misses: 2 603 007 836
-\end_layout
-
-\begin_layout Itemize
-L2 D-Cache misses: 632 119 002
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Dgemm:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Time: 0.292122 
-\end_layout
-
-\begin_layout Itemize
-L1 D-Cache misses: 90 000 005
-\end_layout
-
-\begin_layout Itemize
-L2 D-Cache misses: 7 100 193
-\end_layout
-
-\end_deeper
-\begin_layout Subsection*
-Speed
-\end_layout
-
-\begin_layout Standard
-Matrix sizes: variable from 100*1..
- 100*10 (for m, n and k) and 5 iterations for each size
-\end_layout
-
-\begin_layout Itemize
-Simple
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-FP adds total: 11 339 988 599
-\end_layout
-
-\begin_layout Itemize
-FP muls total: 11 419 988 547
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Dgemm
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-FP adds total: 5 439 996 293
-\end_layout
-
-\begin_layout Itemize
-FP muls total: 5 459 996 252
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Output (total matrix size | simple_mm time in sec | dgemm_mm time in sec)
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset listings
-inline false
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graph_flops.eps
 
-234 0.003333 0.000667  
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
-
-937 0.017997 0.002666 
-\end_layout
+\begin_inset Caption
 
 \begin_layout Plain Layout
 
-2109 0.072489 0.009165  
-\end_layout
-
-\begin_layout Plain Layout
-
-3750 0.231298 0.020664  
-\end_layout
-
-\begin_layout Plain Layout
-
-5859 0.467096 0.042327  
-\end_layout
-
-\begin_layout Plain Layout
-
-8437 1.445114 0.067490  
-\end_layout
-
-\begin_layout Plain Layout
-
-11484 1.103166 0.107484  
-\end_layout
-
-\begin_layout Plain Layout
-
-15000 3.542295 0.161475  
-\end_layout
-
-\begin_layout Plain Layout
-
-18984 3.318995 0.224966  
-\end_layout
-
-\begin_layout Plain Layout
-
-23437 4.272018 0.308952
 \end_layout
 
 \end_inset
@@ -739,49 +771,53 @@ status open
 
 \end_layout
 
-\begin_layout Itemize
-Total simple: 14.4738 sec
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-Total dgemm: 0.945856 sec
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename graph_cache.eps
+
+\end_inset
+
+
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-Simple
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-Total FLOP: 22 759 977 146
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-FLOP/s: 314 498 986
+\end_inset
+
+
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-Dgemm
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Total FLOPS: 10 899 992 545
-\end_layout
-
-\begin_layout Itemize
-FLOP/s: 2 304 789 004
-\end_layout
-
-\end_deeper
 \begin_layout Section
 Conclusions
 \end_layout
 
 \begin_layout Standard
-We have ...
+We have shown the three different implementation of the matrix-matrix multiplica
+tion functions, and evaluated the performance of them.
+ We have shown that our implementations of the function cannot compete with
+ a highly optimized library function of an HPC library.
 \end_layout
 
 \begin_layout Bibliography
