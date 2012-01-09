@@ -6,8 +6,11 @@
 #endif
 
 #include "integrand.h"
+#include "mxv.h"
 
-void run_f(int n) {
+int debug;
+
+double run_f(int n) {
     double h = 1.0 / (double)n;
     double sum = 0.0;
 
@@ -19,10 +22,22 @@ void run_f(int n) {
         sum += f(x);
     } /* end parallel */
 
+    return sum;
 }
 
 
 int main(int argc, char** argv) {
-    run_f(0);
+    if(argc < 2) {
+        perror("Need more arguments\n");
+        return -1;
+    }
+        
+    
+    int n = atoi(argv[1]);
+    debug = 0;
+    double result = run_f(n);
+
+    printf("Result: %f\n", result/n);
+    return 0;
 }
 

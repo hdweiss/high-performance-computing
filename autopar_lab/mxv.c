@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "mxv.h"
 
 extern int debug;
 
@@ -50,9 +50,9 @@ void mxv (int m, int n, double **a, double **b, double **c) {
 	for (i = 0; i < m; i++) {
 		sum = 0.0;
 		for (j = 0; j< n; j++) {
-			sum += a[i][j]*b[j];
+			sum += a[i][j] * b[0][j];
 		}
-		c[i] = sum;
+		c[0][i] = sum;
 	}
 }
 
