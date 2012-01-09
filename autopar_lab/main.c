@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
     for(int i=1; i<=n; i++) {
         double x = h * ((double)i + 0.5);
         sum += f(x);
-    }
+    } /* end parallel */
+    
 }
 
