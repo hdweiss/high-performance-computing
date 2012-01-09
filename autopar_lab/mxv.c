@@ -45,11 +45,11 @@ void print_matrix(double** matrix, int row, int column, const char* message) {
 }
 
 void mxv (int m, int n, double **a, double **b, double **c) {
-	int i, j;
-	double sum;
-	for (i = 0; i < m; i++) {
-		sum = 0.0;
-		for (j = 0; j< n; j++) {
+
+#pragma omp parallel for
+	for (int i = 0; i < m; i++) {
+		double sum = 0.0;
+		for (int j = 0; j< n; j++) {
 			sum += a[i][j] * b[0][j];
 		}
 		c[0][i] = sum;

@@ -1,18 +1,14 @@
 # Sample Makefile
 CC = suncc
 OPENMP = -xopenmp
-SERIAL = -xautopar -xloopinfo
-OPT = -g -fast -xlic_lib=sunperf -xrestrict -xO5
+OPT = -g -fast -xlic_lib=sunperf -xrestrict -xO5 -lm -xautopar -xloopinfo
 CFLAGS = $(OPT)
-OBJECTS = main.o integrand.o mxv.o
+OBJECTS = main.o mxv.o
 
-all : main main_mp main_unopt
+all : main main_mp
 
 main : $(OBJECTS)
-	$(CC) $(CFLAGS) $(SERIAL) -o $@ $(OBJECTS)
-
-main_unopt: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 main_mp: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OPENMP) -o $@ $(OBJECTS)
@@ -31,5 +27,5 @@ runtest:
 
 # DO NOT DELETE
 
-main.o: integrand.h mxv.h
+main.o: mxv.h
 mxv.o: mxv.h
