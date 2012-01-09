@@ -1,9 +1,9 @@
 # Sample Makefile
 CC = suncc
-OPT = -g -fast -xlic_lib=sunperf -xrestrict -xO5
+OPT = -g -fast -xlic_lib=sunperf -xrestrict -xO5 -xautopar -xloopinfo
 WARN = 
-CFLAGS = $(OPT) $(WARN) # the C compiler flags OBJECTS = data.o main.o io.o
-OBJECTS = main.o
+CFLAGS = $(OPT) $(WARN)
+OBJECTS = main.o integrand.o
 
 autopar : $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
@@ -19,3 +19,6 @@ depend:
 
 run4:
 	OMP_NUM_THREADS=4 ./autopar
+# DO NOT DELETE
+
+main.o: integrand.h
