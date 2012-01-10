@@ -3,35 +3,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "writepng.h"
-#include "gauss.h"
+#include "poisson.h"
 
-void init_array(double* image, double value, int N){
-	for(int i = 0; i <= N+1; i++){
-		for(int j = 0; j <= N+1; j++){
-			double tmp_value = value;
-			if((j == 0)||(j == N+1)){
-				tmp_value = 20.0;
-			}
-			if(i == 0){
-				tmp_value = 20.0;
-			} else if(i == N+1){
-				tmp_value = 0.0;
-			}
-			image[i*(N+2)+j] = tmp_value;
-		}
-	}
-}
+
 
 int main(int argc, char *argv[])
 {
     int N=1000;
-    int	max_iter;
+    int	max_iter = 1;
     double *image;
+	int choice = 0;
+	double threshold = 0.8;
 
-    max_iter = 400;
+    //max_iter = 400;
 
     // command line argument sets the dimensions of the image
     if ( argc == 2 ) N = atoi(argv[1]);
+	else if ( argc == 3 ) {
+		N = atoi(argv[1]);
+		choice = atoi(argv[2]);
+	}
 
     image = (double *)malloc( (N+2) * (N+2) * sizeof(double));
     if ( image == NULL ) {
@@ -41,9 +32,11 @@ int main(int argc, char *argv[])
 
 	init_array(image,10,N);
 
-    gauss(N, image, max_iter);
+	// 0: jacobi
+	// 1: gauss
+    poisson(N, image, threshold, max_iter, choice);
 
-    writepng("poisson.png", image, N, N);
+    //writepng("poisson.png", image, N, N);
 
 	return 0;
 }

@@ -1,7 +1,7 @@
 TARGET	= poisson
-OBJS	= main.o gauss.o jacobi.o writepng.o 
+OBJS	= main.o poisson.o writepng.o 
 
-OPT	= -g -fast
+OPT	= -g -fast -lm
 ISA	= 
 PARA	= 
 
@@ -43,5 +43,5 @@ depend:
 # dependencies
 # DO NOT DELETE
 
-gauss.o: gauss.h
-main.o: writepng.h gauss.h
+main.o: writepng.h poisson.h
+poisson.o: poisson.h
