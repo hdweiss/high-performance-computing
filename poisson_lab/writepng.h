@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void writepng(char *filename, int *array, int x, int y);
+void writepng(char *filename, double *array, int x, int y);
 
 #ifdef  __cplusplus
 }
