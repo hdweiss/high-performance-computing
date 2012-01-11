@@ -31,9 +31,9 @@ writepng(char *filename, double *array, int x, int y) {
 
     for(i = 0; i < x; i++) {
 	for(j = 0; j < y; j++) {
-	    c = (maxcolours * sqrt(array[i*y + j] * scale));
+	    c = (maxcolours * (array[i*y + j] * scale));
 	    // plot expects pixel numbers from 1..xmax, 1..ymax!
-	    png1.plot(i+1, j+1, (int) (3*c/5), (int) (3*c/5), (int) c);
+	    png1.plot(i+1, j+1, (int) c, 0, (int) (3*(maxcolours-c)/5));
 	}
     }
 

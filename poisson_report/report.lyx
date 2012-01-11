@@ -1,0 +1,638 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\noun on
+Assignment 2: Poisson problem
+\end_layout
+
+\begin_layout Author
+
+\noun on
+02614 High-Performance Computing
+\end_layout
+
+\begin_layout Date
+Due 13th of January 2012
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{1cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Henning Weiss - s062407
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{0.6cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Rasmus Bo Sørensen - s072080
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{0.6cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Evangelia Kasapaki - s114598
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Summary
+\end_layout
+
+\begin_layout Standard
+In this report we will implement two methods for solving the Poisson problem
+ in a two dimensional space.
+ First the two methods are implemented as sequential functions and their
+ performance is compared.Then the two implementations are parallelized using
+ openMP and their performance is again evaluated compared to each other.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Solving the Poisson problem has many usages in science and engineering.
+ In this assignment we will implement and evaluated two discretized methods
+ for solving the Poisson problem in 2 dimension.
+ The Poisson problem in two dimensions has the form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\text{²}u}{\partial x\text{²}}+\frac{\partial\text{²}u}{\partial y\text{²}}=f(x,y),\quad(x,y)\in\Omega
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The problem of the assignment.
+\end_layout
+
+\begin_layout Standard
+The tasks of the assignment.
+\end_layout
+
+\begin_layout Standard
+Both methods are iterative methods, which converges towards the solution
+\end_layout
+
+\begin_layout Section
+Design
+\end_layout
+
+\begin_layout Subsection
+Jacobi
+\end_layout
+
+\begin_layout Standard
+The Jacobi method calculates each iteration of the solution one point at
+ the time.
+ To calculate the next iteration of a point using the Jacobi method, depends
+ on the four neighbor points of the current iteration.
+\end_layout
+
+\begin_layout Standard
+The Jacobi function is implemented using three nested loops.
+ The outer loop controls the number of iterations, the second loop controls
+ the rows of the two dimensional space.
+ The third and inner loop controls the columns of the two dimensional space.
+ The Jacobi method requires two arrays, one to store the current iteration
+ and one the store the next iteration.
+\end_layout
+
+\begin_layout Subsection
+Gauss-Seidel
+\end_layout
+
+\begin_layout Standard
+The Gauss-Seidel method is implemented very similar to the Jacobi method.
+ The difference to the Jacobi method is that when the upper and left neighbor
+ points are addressed it is the points of the next iteration rather than
+ the points of the current iteration.
+\end_layout
+
+\begin_layout Standard
+The Gauss-Seidel method has two advantages over the Jacobi method.
+ The first advantage is that the Gauss-Seidel method converges faster towards
+ the true solution than the Jacobi method, the second is the space complexity
+ of the method.
+ The Gauss-Seidel method only needs one array of dimension 
+\begin_inset Formula $N\times N$
+\end_inset
+
+ to store the state in, compared to the two arrays of dimension 
+\begin_inset Formula $N\times N$
+\end_inset
+
+ used by the Jacobi method.
+\end_layout
+
+\begin_layout Subsection
+OpenMP Jacobi
+\end_layout
+
+\begin_layout Standard
+OpenMP #pragma added
+\end_layout
+
+\begin_layout Subsection
+OpenMP Gauss-Seidel
+\end_layout
+
+\begin_layout Section
+Experimental setup
+\end_layout
+
+\begin_layout Section
+Machine description
+\end_layout
+
+\begin_layout Standard
+We used two types of machines for the performance evaluation, AMD and Intel.
+ Both machines are 64-bits processors of x86 architecture.
+ The AMD machine has 2 AMD Opteron 6168 processors with a total of 24 cores
+ reaching 0.8-1.9GHz.
+ It has 64KB of L1 cache and 512KB of L2 on each core.
+ It also has 12MB L3 cache on each processor.
+ Intel machine has 2 Intel Xeon X5550 processors with a total of 8 cores
+ reaching 1.6-2.67GHZ.
+ It has 32KB of L1 cache and 256KB of L2 cache on each core.
+ It also has a L3 cache of 8MB per processor.
+ The both have separate instruction and data L1 caches, while cache is unified
+ in L2 and L3.
+ Both machines run Linux 2.6.32 as OS.
+\end_layout
+
+\begin_layout Standard
+For the experiments on performance evaluation on variable matrix size we
+ used the AMD machine.
+ For variable block size we used both machines.
+ The difference in the memory hierarchy sizes is considered to affect the
+ performance of the function by changing the block size.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Machine configuration for the performed experiments.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="7">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Vendor
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# of cores
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+L1 Cache
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+L2 Cache
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clock
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AMD
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linux 2.6.32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x86_64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+64kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+512kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.9 GHz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Intel
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linux 2.6.32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x84_64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+256kb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.67 GHz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Compilers
+\end_layout
+
+\begin_layout Standard
+We compile our program using the Sun C 5.10 Linux_i386(suncc) compiler using
+ the following options
+\emph on
+ -fast, -xlic_lib=sunperf
+\emph default
+, 
+\emph on
+-xrestrict, -xO5 
+\emph default
+flags.
+ Additionally we use the 
+\emph on
+-xchip=opteron
+\emph default
+ flag on the Linux AMD machines to get the chip set optimizations.
+ Fast is a macro that enables many other optimization options and the 
+\emph on
+-xO5
+\emph default
+ enables the highest optimization level to enable good performance.
+ The 
+\emph on
+-xlic_lib=sunperf 
+\emph default
+specifies the linking against the Sun performance library which is used
+ for 
+\emph on
+DGEMM
+\emph default
+.
+ Finally the 
+\emph on
+-xrestrict 
+\emph default
+flags tells the compiler that we have no overlapping pointers in our code.
+ Overlapping pointers prevent the compiler from doing loop unrolling.
+\end_layout
+
+\begin_layout Standard
+When using the Sun studio analyzer, it is shown that the row and column
+ loops in our functions are interchanged and the loops are unrolled up to
+ eight times to increase performance.
+ Additionally pre-fetching is enabled automatically in the compiler, allowing
+ us to circumvent some of the cache misses.
+\end_layout
+
+\begin_layout Section
+Comparison
+\end_layout
+
+\begin_layout Standard
+Table containing the run times of the Jacobi and Gauss-Seidel methods for
+ some threshold.
+ The number of iterations pr second.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+Plot of the run time for the MP_Jacobi and the MP_Gauss as a function of
+ the number of threads.
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To make a fair comparison of the MP_Jacobi and MP_Gauss the speed with which
+ the two solutions converges has to be considered.
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+We have shown the three different implementation of the matrix-matrix multiplica
+tion functions, and evaluated the performance of them.
+ We have shown that our implementations of the function cannot compete with
+ a highly optimized library function of an HPC library.
+ However different implementations that take advantage of data locality
+ and machine properties can affect performance.
+ The blocking matrix-matrix multiplication algorithm is faster for greater
+ matrix sizes, but it never reaches the performance of the DGEMM library
+ function.
+\end_layout
+
+\end_body
+\end_document
