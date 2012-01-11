@@ -7,7 +7,7 @@ double f(int i, int j, int n, double delta) {
 	double n2 = (double)(n+2)/2.0;
 	double x = (i - n2) * delta;
 	double y = (j - n2) * delta;
-	if ( (x >= 0) && (x <= 1/3) && (y >= -2/3) && (y <= -1/3))
+	if ( (x >= 0.0) && (x <= 1.0/3.0) && (y >= -2.0/3.0) && (y <= -1.0/3.0))
 		return 200.0;
 	return 0.0;
 }
