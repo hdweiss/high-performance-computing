@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     int	max_iter = 1;
     double *image;
 	int choice = 0;
-	double threshold = 0.8;
+	double threshold = 0.5;
 
     //max_iter = 400;
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	// 1: gauss
     poisson(N, image, threshold, max_iter, choice);
 
-    //writepng("poisson.png", image, N, N);
+    writepng("poisson.png", image, N+2, N+2);
 
 	return 0;
 }

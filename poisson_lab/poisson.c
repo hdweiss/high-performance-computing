@@ -17,7 +17,7 @@ double threshold (double *u, double *u_old, int n) {
 	double sum = 0.0;
 	for (int i = 1; i <= n; i++) {
 		for (int j = 0; j <= n; j++) {
-			sum += sqrt ( abs (( u[i*(n+2)+j] - u_old[i*(n+2)+j] )) );
+			sum += pow ( ( u[i*(n+2)+j] - u_old[i*(n+2)+j] ),2 );
 		}
 	}
 	return sqrt(sum);
@@ -51,8 +51,10 @@ void jacobi(double *grid, double *grid_old, int n, int kmax) {
 				double top = grid_old[(i+1)*(n+2)+j];
 				double left = grid_old[i*(n+2)+j-1];
 				double right = grid_old[i*(n+2)+j+1];
-				grid[i*n+j] = 0.25*(bot + top + left + right + delta2*f_ij);
+				grid[i*(n+2)+j] = 0.25*(bot + top + left + right + delta2*f_ij);
+				//printf("%.1f ",grid[i*(n+2)+j]);
 			}
+			//printf("\n");
 		}
 	}
 	return;
@@ -75,7 +77,9 @@ void gauss(double* img,double *img_old, int N, int max_iter){
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img_old[ i   *(N+2)+(j+1)] \
 										+ delta2*f( i, j, N+2, delta ));
+				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
 			}
+			//printf("\n");
 		}
 	}
 	return;
@@ -94,10 +98,11 @@ void poisson(int n, double *grid, double th, int kmax, int choice) {
 		grid = tmp;		
 
 		if (choice == 0) {
-
+			printf("Poisson calculating. Using the jacobi method.");
 			jacobi(grid, grid_old, n, kmax);
 		}
 		else {
+			printf("Poisson calculating. Using the gauss method.");
 			gauss(grid, grid_old, n, kmax);
 		}
 

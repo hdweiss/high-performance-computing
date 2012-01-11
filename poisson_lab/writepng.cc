@@ -8,7 +8,7 @@
 double maxcolours = 65535;
 
 double
-maxval(int *vector, int len) {
+maxval(double *vector, int len) {
 
     int i;
     double max = FLT_MIN;
@@ -20,7 +20,7 @@ maxval(int *vector, int len) {
 }
 
 void
-writepng(char *filename, int *array, int x, int y) {
+writepng(char *filename, double *array, int x, int y) {
     
     int i, j;
     double scale = 1.0 / maxval(array, x*y);
@@ -31,7 +31,7 @@ writepng(char *filename, int *array, int x, int y) {
 
     for(i = 0; i < x; i++) {
 	for(j = 0; j < y; j++) {
-	    c = (maxcolours * sqrt((float)array[i*y + j] * scale));
+	    c = (maxcolours * sqrt(array[i*y + j] * scale));
 	    // plot expects pixel numbers from 1..xmax, 1..ymax!
 	    png1.plot(i+1, j+1, (int) (3*c/5), (int) (3*c/5), (int) c);
 	}
