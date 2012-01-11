@@ -246,6 +246,10 @@ The Gauss-Seidel method has two advantages over the Jacobi method.
 OpenMP Jacobi
 \end_layout
 
+\begin_layout Standard
+OpenMP #pragma added
+\end_layout
+
 \begin_layout Subsection
 OpenMP Gauss-Seidel
 \end_layout
