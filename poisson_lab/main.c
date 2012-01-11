@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     int	max_iter = 1;
     double *image;
 	int choice = 0;
-	double threshold = 0.5;
+	double threshold = 0.08;
 
     //max_iter = 400;
 
