@@ -80,17 +80,17 @@ void gauss(double* img,double *img_old, int N, int max_iter){
     for(int k = 0; k < max_iter; k++){
 		for(int i = 1; i <= N; i++){
 			for(int j = 1; j <= N; j++){
-/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img[ i   *(N+2)+(j+1)] \
-										+ delat2*f( i, j, N+2, delta ));
-*/
-				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+										+ delta2*f( i, j, N+2, delta ));
+
+/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img_old[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img_old[ i   *(N+2)+(j+1)] \
-										+ delta2*f( i, j, N+2, delta ));
+										+ delta2*f( i, j, N+2, delta ));*/
 				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
 			}
 			//printf("\n");
@@ -144,10 +144,10 @@ inline void do_work(double* img, int delta2, int delta, int N, int i) {
       //                                + img_old[ i   *(N+2)+(j+1)]          
         //                              + delta2*f( i, j, N+2, delta ));
     		img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ]        \
-                + img[(i+1)*(N+2)+ j   ]                                \
-                + img[ i   *(N+2)+(j-1)]                                \
-                + img[ i   *(N+2)+(j+1)]                                \
-                + delta2*f( i, j, N+2, delta ));
+                					+ img[(i+1)*(N+2)+ j   ]                                \
+					                + img[ i   *(N+2)+(j-1)]                                \
+					                + img[ i   *(N+2)+(j+1)]                                \
+					                + delta2*f( i, j, N+2, delta ));
 	}
 }
 
