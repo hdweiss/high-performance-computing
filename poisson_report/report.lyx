@@ -153,8 +153,9 @@ Summary
 In this report we will implement two methods for solving the Poisson problem
  in a two dimensional space.
  First the two methods are implemented as sequential functions and their
- performance is compared.Then the two implementations are parallelized using
- openMP and their performance is again evaluated compared to each other.
+ performance is compared.
+ The two implementations are parallelized using openMP and their performance
+ is again evaluated compared to each other.
 \end_layout
 
 \begin_layout Section
@@ -165,14 +166,17 @@ Introduction
 Solving the Poisson problem has many usages in science and engineering.
  In this assignment we will implement and evaluated two discretized methods
  for solving the Poisson problem in 2 dimension.
- The Poisson problem in two dimensions has the form:
+ Both methods are iterative methods that converges towards the solution
+ of the Poisson problem.
+ The general solution to the Poisson problem in two dimensions in the form
+ we will be using it is:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{equation}
-\frac{\partial\text{²}u}{\partial x\text{²}}+\frac{\partial\text{²}u}{\partial y\text{²}}=f(x,y),\quad(x,y)\in\Omega
-\end{equation}
+\[
+u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²}f_{i,j}\right)
+\]
 
 \end_inset
 
@@ -180,15 +184,37 @@ Solving the Poisson problem has many usages in science and engineering.
 \end_layout
 
 \begin_layout Standard
-The problem of the assignment.
+The details of the math are described in the assignment, we will therefore
+ omit the detailed walk though.
 \end_layout
 
 \begin_layout Standard
-The tasks of the assignment.
+In this assignment we wish to know the steady-state temperature in a square
+ room.
+ The room has 3 walls that are 20 degrees Celsius and one wall that is 0
+ degrees Celsius.
+ In the room there is a radiator 
 \end_layout
 
 \begin_layout Standard
-Both methods are iterative methods, which converges towards the solution
+In this assignment there are 4 tasks to be performed:
+\end_layout
+
+\begin_layout Itemize
+Implement a sequential version of the Jacobi update method.
+\end_layout
+
+\begin_layout Itemize
+Implement a sequential version of the Gauss-Seidel update method.
+\end_layout
+
+\begin_layout Itemize
+Implement a parallelized version of the Jacobi update method using OpenMP.
+\end_layout
+
+\begin_layout Itemize
+Implement a parallelized version of the Gauss-Seidel update method using
+ OpenMP.
 \end_layout
 
 \begin_layout Section
@@ -204,6 +230,32 @@ The Jacobi method calculates each iteration of the solution one point at
  the time.
  To calculate the next iteration of a point using the Jacobi method, depends
  on the four neighbor points of the current iteration.
+ Meaning that each point of the next iteration can be calculated at once
+ as long as the current iteration has been completed.
+ The formula for calculating the next iteration of a point can be seen in
+ equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:jacobi"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:jacobi}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -224,6 +276,29 @@ The Gauss-Seidel method is implemented very similar to the Jacobi method.
  The difference to the Jacobi method is that when the upper and left neighbor
  points are addressed it is the points of the next iteration rather than
  the points of the current iteration.
+ Th changed formula can be seen in equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:gauss-seidel"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k+1)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k+1)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:gauss-seidel}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -240,6 +315,8 @@ The Gauss-Seidel method has two advantages over the Jacobi method.
 \end_inset
 
  used by the Jacobi method.
+ This can make the Gauss-Seidel method perform better than the Jacobi method
+ for bigger problems.
 \end_layout
 
 \begin_layout Subsection
@@ -247,15 +324,69 @@ OpenMP Jacobi
 \end_layout
 
 \begin_layout Standard
-OpenMP #pragma added
+The Jacobi method only contains data dependencies between iterations.
+ It is therefore very easy to parallelize the calculation of each iteration,
+ a barrier after each iteration is needed to enforce this data dependency.
+ The implementation of the Jacobi method is parallelized only by adding
+ #pragma statements to the code.
+\end_layout
+
+\begin_layout Standard
+Why is the outer most loop inside the #parallel but not part of the worksharing?
+\end_layout
+
+\begin_layout Standard
+Scoping of variables.
+\end_layout
+
+\begin_layout Standard
+Which #pragma statements are added?
 \end_layout
 
 \begin_layout Subsection
 OpenMP Gauss-Seidel
 \end_layout
 
+\begin_layout Standard
+Because of the data dependencies in the Gauss-Seidel method, the method
+ can not be parallelized in the same way as the Jacobi method.
+ In the Gauss-Seidel method the grid is partitioned in horizontal blocks
+ each executed by the same thread throughout the whole execution, making
+ god use of the data locality.
+ Each block should fulfill the two conditions:
+\end_layout
+
+\begin_layout Itemize
+thread t-1 has already performed step s
+\end_layout
+
+\begin_layout Itemize
+thread t and t+1 have performed the same number of steps
+\end_layout
+
+\begin_layout Standard
+The two conditions ensures that the data dependencies are respected.
+\end_layout
+
 \begin_layout Section
 Experimental setup
+\end_layout
+
+\begin_layout Standard
+The experiments we have run for this assignment has been carried out using
+ bash scripts to test and plot the results.
+\end_layout
+
+\begin_layout Standard
+How is the performance measured? wall-clock time wtime()
+\end_layout
+
+\begin_layout Standard
+How are the programs run? The programs are started from scripts.
+\end_layout
+
+\begin_layout Standard
+How are the program analyzed? - Thread-analyzer
 \end_layout
 
 \begin_layout Section
@@ -580,27 +711,101 @@ Comparison
 \end_layout
 
 \begin_layout Standard
-Table containing the run times of the Jacobi and Gauss-Seidel methods for
- some threshold.
- The number of iterations pr second.
+Performance of the sequential Jacobi and Gauss-Seidel method as a function
+ of N, evaluate the performance of caching.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
-Plot of the run time for the MP_Jacobi and the MP_Gauss as a function of
- the number of threads.
+Plot of Jacobi method as a function of N.
+ Y axis = iterations pr.
+ second more fair, because Gauss-Seidel converges faster.
 \end_layout
 
 \begin_layout Plain Layout
 \begin_inset Caption
 
 \begin_layout Plain Layout
+Comparing performance of the sequential and parallelized Jacobi and Gauss-Seidel
+ methods.
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+How does the performance of the two methods differ?
+\end_layout
+
+\begin_layout Standard
+Plot to see the convergence of the two sequential methods.
+\end_layout
+
+\begin_layout Standard
+State assumptions and fixed values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+Graph
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Run time of the Jacobi and Gauss-Seidel methods, as a function of the threshold.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+What is seen on the graph?
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+Plot of the (Number of iterations)/(Run time) for the MP_Jacobi and the
+ MP_Gauss as a function of the number of threads.
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Number of iterations pr.
+ second, as a function of the number of threads for MP_Jacobi and MP_Gauss.
 \end_layout
 
 \end_inset
@@ -623,15 +828,17 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-We have shown the three different implementation of the matrix-matrix multiplica
-tion functions, and evaluated the performance of them.
- We have shown that our implementations of the function cannot compete with
- a highly optimized library function of an HPC library.
- However different implementations that take advantage of data locality
- and machine properties can affect performance.
- The blocking matrix-matrix multiplication algorithm is faster for greater
- matrix sizes, but it never reaches the performance of the DGEMM library
- function.
+We have implemented and parallelized two iterative methods for approximating
+ a solution to the Poisson problem.
+ We have compared the sequential and parallelized versions.
+ We have suggested how the each version can be optimized.
+ We have shown that for problems larger than XX th Gauss-Seidel method converges
+ considerably faster than the Jacobi version.
+ When the sequential versions are parallelized we see that the Jacobi method
+ becomes faster than the....
+ The parallelized Gauss-Seidel method can be optimized for bigger problems
+ by removing the use for two arrays to hold the current iteration and the
+ next iteration.
 \end_layout
 
 \end_body
