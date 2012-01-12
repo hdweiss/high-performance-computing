@@ -214,10 +214,7 @@ u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²
 \begin_layout Standard
 The details of the math are described in the assignment, we will therefore
  omit the detailed walk though.
-\end_layout
-
-\begin_layout Standard
-In this assignment we wish to know the steady-state temperature in a square
+ In this assignment we wish to know the steady-state temperature in a square
  room.
  The room has 3 walls that are 20 degrees Celsius and one wall that is 0
  degrees Celsius.
