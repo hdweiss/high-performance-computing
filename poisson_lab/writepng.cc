@@ -33,7 +33,7 @@ writepng(char *filename, double *array, int x, int y) {
 	for(j = 0; j < y; j++) {
 	    c = (maxcolours * (array[i*y + j] * scale));
 	    // plot expects pixel numbers from 1..xmax, 1..ymax!
-	    png1.plot(j+1, i+1, (int) c, 0, (int) (3*(maxcolours-c)/5));
+	    png1.plot(y-j, x-i, (int) c, 0, (int) (3*(maxcolours-c)/5));
 	}
     }
 
