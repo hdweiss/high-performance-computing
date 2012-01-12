@@ -136,17 +136,22 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
 	return;
 }
 
-inline void do_work(double* img, double* img_old, int delta2, int delta, int N, int i) {
+inline void do_work(double* img, int delta2, int delta, int N, int i) {
     for(int j = 1; j <= N; j++){
-        img[i*(N+2)+j] = 0.25*(       img[(i-1)*(N+2)+ j ]
-                                      + img_old[(i+1)*(N+2)+ j ]
-                                      +     img[ i   *(N+2)+(j-1)]          
-                                      + img_old[ i   *(N+2)+(j+1)]          
-                                      + delta2*f( i, j, N+2, delta ));
-    }
+//        img[i*(N+2)+j] = 0.25*(       img[(i-1)*(N+2)+ j ]
+  //                                    + img_old[(i+1)*(N+2)+ j ]
+    //                                  +     img[ i   *(N+2)+(j-1)]          
+      //                                + img_old[ i   *(N+2)+(j+1)]          
+        //                              + delta2*f( i, j, N+2, delta ));
+    		img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ]        \
+                + img[(i+1)*(N+2)+ j   ]                                \
+                + img[ i   *(N+2)+(j-1)]                                \
+                + img[ i   *(N+2)+(j+1)]                                \
+                + delta2*f( i, j, N+2, delta ));
+	}
 }
 
-void gauss_mp(double* img,double *img_old, int N, int max_iter){
+void gauss_mp(double* img, int N, int max_iter){
 	double delta = 2.0/(double)(N+2);
 	double delta2 = pow(delta,2);
     int* start;
@@ -164,16 +169,16 @@ void gauss_mp(double* img,double *img_old, int N, int max_iter){
             printf("Numthreads %i\n", omp_get_num_threads());
             start = malloc(sizeof(int) * (omp_get_num_threads() + 2));
             finish = malloc(sizeof(int) * (omp_get_num_threads() + 2));
-            start[omp_get_num_threads() + 2] = max_iter + 1;
+            start[omp_get_num_threads() + 1] = max_iter + 1;
             finish[0] = max_iter + 1;
+
         }
 
         int thread_id = omp_get_thread_num() + 1;
         start[thread_id] = 0;
         finish[thread_id] = 0;
 
-        /* const int grid_size = N / omp_get_num_threads(); */
-        int grid_size = 10;
+        const int grid_size = N / omp_get_num_threads();
         int i_lower = (grid_size * (thread_id - 1)) + 1;
         int i_upper = grid_size * thread_id;
         // TODO Fix rounding errors
@@ -189,11 +194,11 @@ void gauss_mp(double* img,double *img_old, int N, int max_iter){
             printf("%i passed first guard on %i'th iteration\n", thread_id, k);
 
 
-#pragma omp for schedule(static,10) nowait
+#pragma omp for schedule(static) nowait
             for(int i = 1; i <= N; i++) {
 
                 if(i == i_lower) {
-                    do_work(img, img_old, delta, delta2, N, i); // TODO Check if this is inlined
+                    do_work(img, delta, delta2, N, i); // TODO Check if this is inlined
                     start[thread_id] = k;
                     #pragma omp flush(start)
                 }
@@ -206,13 +211,13 @@ void gauss_mp(double* img,double *img_old, int N, int max_iter){
                     }
                     printf("%i passed second guard on %i'th iteration\n", thread_id, k);
 
-                    do_work(img, img_old, delta, delta2 ,N, i);
+                    do_work(img, delta, delta2 ,N, i);
                     finish[thread_id] = k;
                     #pragma omp flush(finish)
                 }
 
                 else {
-                    do_work(img, img_old, delta, delta2, N, i);
+                    do_work(img, delta, delta2, N, i);
                     //printf("%.1f ",f(i,j,N+2,delta)*delta2);
                     }
                 } /* for j */
@@ -257,7 +262,7 @@ void poisson(int n, double *grid, double th, int kmax, int choice) {
     }
     else {
 //        printf("Poisson calculating. Using the gauss_mp method.");
-        gauss_mp(grid, grid_old, n, kmax);
+        gauss_mp(grid, n, kmax);
     }
         
 		/* d = threshold(grid, grid_old, n); */
