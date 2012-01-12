@@ -1,7 +1,7 @@
 TARGET	= poisson
 OBJS	= main.o poisson.o writepng.o 
 
-OPT	= -g -fast -lm -xopenmp
+OPT	= -g -fast -lm -xopenmp -xvpara
 ISA	= 
 PARA	= 
 

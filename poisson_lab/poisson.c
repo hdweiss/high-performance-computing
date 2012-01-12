@@ -123,7 +123,8 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
                 //printf("\n");
             } /* End for */
 
-#pragma omp master {
+#pragma omp single
+            {
             double *tmp = grid_old;
             grid_old = grid;
             grid = tmp;
@@ -135,53 +136,99 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
 	return;
 }
 
+inline void do_work(double* img, double* img_old, int delta2, int delta, int N, int i) {
+    for(int j = 1; j <= N; j++){
+        img[i*(N+2)+j] = 0.25*(       img[(i-1)*(N+2)+ j ]
+                                      + img_old[(i+1)*(N+2)+ j ]
+                                      +     img[ i   *(N+2)+(j-1)]          
+                                      + img_old[ i   *(N+2)+(j+1)]          
+                                      + delta2*f( i, j, N+2, delta ));
+    }
+}
+
 void gauss_mp(double* img,double *img_old, int N, int max_iter){
 	double delta = 2.0/(double)(N+2);
 	double delta2 = pow(delta,2);
-    int* flags;
+    int* start;
+    int* finish;
+    int grid_size = 0;
+    
     // TODO Check for corner cases with regards to flags
     // TODO Make threads ordered (or think of other crazy solution)
     
-#pragma omp parallel
+#pragma omp parallel shared(start, finish, delta, delta2)
     {
-
-        int thread_id = omp_get_thread_num();
-#pragma omp master
-            {
-        printf("Numthreads %i\n", omp_get_num_threads());
-        flags = malloc(sizeof(int) * omp_get_num_threads() + 2);
+        
+#pragma omp single
+        {
+            printf("Numthreads %i\n", omp_get_num_threads());
+            start = malloc(sizeof(int) * (omp_get_num_threads() + 2));
+            finish = malloc(sizeof(int) * (omp_get_num_threads() + 2));
+            start[omp_get_num_threads() + 2] = max_iter + 1;
+            finish[0] = max_iter + 1;
         }
 
-        for(int k = 0; k < max_iter; k++){
+        int thread_id = omp_get_thread_num() + 1;
+        start[thread_id] = 0;
+        finish[thread_id] = 0;
 
-            while(flags[thread_id+1]+1 == k && flags[thread_id-1] == k+1);
-            // TODO Potential speedup by kicking of the previous thread after calculated current line
-                
-#pragma omp for nowait
-            for(int i = 1; i <= N; i++){
-                for(int j = 1; j <= N; j++){
-/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
-										+ img[(i+1)*(N+2)+ j   ] \
-										+ img[ i   *(N+2)+(j-1)] \
-										+ img[ i   *(N+2)+(j+1)] \
-										+ delat2*f( i, j, N+2, delta ));
-*/
-				img[i*(N+2)+j] = 0.25*(       img[(i-1)*(N+2)+ j   ] \
-										+ img_old[(i+1)*(N+2)+ j   ] \
-										+     img[ i   *(N+2)+(j-1)] \
-										+ img_old[ i   *(N+2)+(j+1)] \
-										+ delta2*f( i, j, N+2, delta ));
-				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
+        /* const int grid_size = N / omp_get_num_threads(); */
+        int grid_size = 10;
+        int i_lower = (grid_size * (thread_id - 1)) + 1;
+        int i_upper = grid_size * thread_id;
+        // TODO Fix rounding errors
+        
+#pragma omp barrier
+        
+        for(int k = 1; k <= max_iter; k++){
+
+            printf("%i waiting for first guard on %i'th iteration finish[%i] \n", thread_id, k, finish[thread_id-1]);
+            while(finish[thread_id - 1] < k) { // Guard 1
+                #pragma omp flush(finish)
+            }
+            printf("%i passed first guard on %i'th iteration\n", thread_id, k);
+
+
+#pragma omp for schedule(static,10) nowait
+            for(int i = 1; i <= N; i++) {
+
+                if(i == i_lower) {
+                    do_work(img, img_old, delta, delta2, N, i); // TODO Check if this is inlined
+                    start[thread_id] = k;
+                    #pragma omp flush(start)
+                }
+
+                else if(i == i_upper) {
+
+                    printf("%i waiting on second guard on %i'th iteration start[%i] \n", thread_id, k, start[thread_id+1]);
+                    while(start[thread_id + 1] < k-1) { // Guard 2
+                     #pragma omp flush(start)
+                    }
+                    printf("%i passed second guard on %i'th iteration\n", thread_id, k);
+
+                    do_work(img, img_old, delta, delta2 ,N, i);
+                    finish[thread_id] = k;
+                    #pragma omp flush(finish)
+                }
+
+                else {
+                    do_work(img, img_old, delta, delta2, N, i);
+                    //printf("%.1f ",f(i,j,N+2,delta)*delta2);
+                    }
                 } /* for j */
             } /* parallel for i */
             
-            flags[thread_id] = k;
-#pragma omp flush(flags)
 			//printf("\n");
 		} /* for k*/
-	}
 	return;
-}
+	}
+
+/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ]        \
+                + img[(i+1)*(N+2)+ j   ]                                \
+                + img[ i   *(N+2)+(j-1)]                                \
+                + img[ i   *(N+2)+(j+1)]                                \
+                + delat2*f( i, j, N+2, delta ));
+*/
 
 
 void poisson(int n, double *grid, double th, int kmax, int choice) {
