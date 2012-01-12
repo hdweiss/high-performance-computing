@@ -12,7 +12,7 @@ double f(int i, int j, int n, double delta) {
 	double x = (i - n2) * delta;
 	double y = (j - n2) * delta;
 	if ( (x >= 0.0) && (x <= 1.0/3.0) && (y >= -2.0/3.0) && (y <= -1.0/3.0))
-		return 500.0;
+		return 200.0;
 	return 0.0;
 }
 
@@ -80,17 +80,17 @@ void gauss(double* img,double *img_old, int N, int max_iter){
     for(int k = 0; k < max_iter; k++){
 		for(int i = 1; i <= N; i++){
 			for(int j = 1; j <= N; j++){
-/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img[ i   *(N+2)+(j+1)] \
-										+ delat2*f( i, j, N+2, delta ));
-*/
-				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+										+ delta2*f( i, j, N+2, delta ));
+
+/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img_old[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img_old[ i   *(N+2)+(j+1)] \
-										+ delta2*f( i, j, N+2, delta ));
+										+ delta2*f( i, j, N+2, delta ));*/
 				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
 			}
 			//printf("\n");
@@ -136,18 +136,21 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
 	return;
 }
 
-inline void do_work(double* img, int delta2, int delta, int N, int i) {
+inline void do_work(double* img, double delta2, double delta, int N, int i) {
     for(int j = 1; j <= N; j++){
 //        img[i*(N+2)+j] = 0.25*(       img[(i-1)*(N+2)+ j ]
   //                                    + img_old[(i+1)*(N+2)+ j ]
     //                                  +     img[ i   *(N+2)+(j-1)]          
       //                                + img_old[ i   *(N+2)+(j+1)]          
         //                              + delta2*f( i, j, N+2, delta ));
+		double fij = f(i,j,N+2,delta);
     		img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ]        \
                 + img[(i+1)*(N+2)+ j   ]                                \
                 + img[ i   *(N+2)+(j-1)]                                \
                 + img[ i   *(N+2)+(j+1)]                                \
-                + delta2*f( i, j, N+2, delta ));
+                + delta2*fij);
+		//if(fij>0.0){printf("f: %.1f\n",fij);}
+		//else if(delta == 0.0){printf("delta: %f\n",delta);}
 	}
 }
 
@@ -156,12 +159,14 @@ void gauss_mp(double* img, int N, int max_iter){
 	double delta2 = pow(delta,2);
     int* start;
     int* finish;
-    int grid_size = 0;
+    //int grid_size = 0;
+//printf("%f\n",delta);
+//	getchar();
     
     // TODO Check for corner cases with regards to flags
     // TODO Make threads ordered (or think of other crazy solution)
     
-#pragma omp parallel shared(start, finish, delta, delta2)
+#pragma omp parallel shared(start, finish, delta, delta2,img,N,max_iter)
     {
         
 #pragma omp single
@@ -187,37 +192,37 @@ void gauss_mp(double* img, int N, int max_iter){
         
         for(int k = 1; k <= max_iter; k++){
 
-            printf("%i waiting for first guard on %i'th iteration finish[%i] \n", thread_id, k, finish[thread_id-1]);
+            //printf("%i waiting for first guard on %i'th iteration finish[%i] \n", thread_id, k, finish[thread_id-1]);
             while(finish[thread_id - 1] < k) { // Guard 1
                 #pragma omp flush(finish)
             }
-            printf("%i passed first guard on %i'th iteration\n", thread_id, k);
+            //printf("%i passed first guard on %i'th iteration\n", thread_id, k);
 
 
 #pragma omp for schedule(static) nowait
             for(int i = 1; i <= N; i++) {
 
                 if(i == i_lower) {
-                    do_work(img, delta, delta2, N, i); // TODO Check if this is inlined
+                    do_work(img, delta2, delta, N, i); // TODO Check if this is inlined
                     start[thread_id] = k;
                     #pragma omp flush(start)
                 }
 
                 else if(i == i_upper) {
 
-                    printf("%i waiting on second guard on %i'th iteration start[%i] \n", thread_id, k, start[thread_id+1]);
+                   // printf("%i waiting on second guard on %i'th iteration start[%i] \n", thread_id, k, start[thread_id+1]);
                     while(start[thread_id + 1] < k-1) { // Guard 2
                      #pragma omp flush(start)
                     }
-                    printf("%i passed second guard on %i'th iteration\n", thread_id, k);
+                    //printf("%i passed second guard on %i'th iteration\n", thread_id, k);
 
-                    do_work(img, delta, delta2 ,N, i);
+                    do_work(img, delta2, delta ,N, i);
                     finish[thread_id] = k;
                     #pragma omp flush(finish)
                 }
 
                 else {
-                    do_work(img, delta, delta2, N, i);
+                    do_work(img, delta2, delta, N, i);
                     //printf("%.1f ",f(i,j,N+2,delta)*delta2);
                     }
                 } /* for j */
@@ -244,9 +249,9 @@ void poisson(int n, double *grid, double th, int kmax, int choice) {
 	/* double d = 1.0; */
 	/* while (d > th) { */
 
-    double *tmp = grid_old;
+/*    double *tmp = grid_old;
     grid_old = grid;
-    grid = tmp;		
+    grid = tmp;	*/	
 
     if (choice == 0) {
 //        printf("Poisson calculating. Using the jacobi method.");
