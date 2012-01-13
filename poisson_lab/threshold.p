@@ -1,8 +1,10 @@
-set autoscale
+#set autoscale
 set term post eps enhanced color
 set out 'threshold.eps'
 
 set title "Convergence"
+set xrange [] reverse
+set autoscale y
 set xlabel "Threshold"
 set ylabel "Time [s]"
 

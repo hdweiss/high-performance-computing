@@ -793,6 +793,16 @@ Plot of Jacobi method as a function of N.
 \end_layout
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/datasize.eps
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -830,7 +840,12 @@ status open
 
 \begin_layout Plain Layout
 \align center
-Graph
+\begin_inset Graphics
+	filename figures/threshold.eps
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -863,6 +878,16 @@ status open
 \begin_layout Plain Layout
 Plot of the (Number of iterations)/(Run time) for the MP_Jacobi and the
  MP_Gauss as a function of the number of threads.
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/threads.eps
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
