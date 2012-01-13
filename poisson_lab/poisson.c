@@ -44,57 +44,80 @@ void init_array(double* image, double value, int N){
 	}
 }
 
-void jacobi(double *grid, double *grid_old, int n, int kmax) {
+void jacobi(double *grid, double *grid_old, int n, int kmax, double th) {
 	double delta = 2.0/(double)(n+2);
 	double delta2 = pow(delta,2);
 
     printf("NumThreads 1\n");
 
-    for (int k = 0; k < kmax; k++) {
-		for (int i = 1; i <= n; i++) {
-			for (int j = 1; j <= n; j++) {
-				double f_ij = f( i, j, n+2, delta );
-				double bot = grid_old[(i-1)*(n+2)+j];
-				double top = grid_old[(i+1)*(n+2)+j];
-				double left = grid_old[i*(n+2)+j-1];
-				double right = grid_old[i*(n+2)+j+1];
-				grid[i*(n+2)+j] = 0.25*(bot + top + left + right + delta2*f_ij);
-				//printf("%.1f ",grid[i*(n+2)+j]);
+	double d = 1.0; 
+	while (d > th) { 
+
+    	for (int k = 0; k < kmax; k++) {
+			for (int i = 1; i <= n; i++) {
+				for (int j = 1; j <= n; j++) {
+					double f_ij = f( i, j, n+2, delta );
+					double bot = grid_old[(i-1)*(n+2)+j];
+					double top = grid_old[(i+1)*(n+2)+j];
+					double left = grid_old[i*(n+2)+j-1];
+					double right = grid_old[i*(n+2)+j+1];
+					grid[i*(n+2)+j] = 0.25*(bot + top + left + right + delta2*f_ij);
+					//printf("%.1f ",grid[i*(n+2)+j]);
+				}
+            	//printf("\n");
 			}
-            //printf("\n");
+        	double *tmp = grid_old;
+        	grid_old = grid;
+        	grid = tmp;
+//			printf("k:%d\n",k);
 		}
-        double *tmp = grid_old;
-        grid_old = grid;
-        grid = tmp;		
-        
+
+		if ( th < 0.0 )
+			break;
+
+		d = threshold(grid, grid_old, n);
+        printf("d %f\n", d);
 	}
 	return;
 }
 
-void gauss(double* img,double *img_old, int N, int max_iter){
+void gauss(double* img,double *img_old, int N, int max_iter, double th){
 	double delta = 2.0/(double)(N+2);
 	double delta2 = pow(delta,2);
 
     printf("NumThreads 1\n");
 
-    for(int k = 0; k < max_iter; k++){
-		for(int i = 1; i <= N; i++){
-			for(int j = 1; j <= N; j++){
-				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+	double d = 1.0; 
+	while (d > th) { 
+
+	    for(int k = 0; k < max_iter; k++){
+			for(int i = 1; i <= N; i++){
+				for(int j = 1; j <= N; j++){
+/*					img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img[ i   *(N+2)+(j+1)] \
 										+ delta2*f( i, j, N+2, delta ));
-
-/*				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+*/
+				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
 										+ img_old[(i+1)*(N+2)+ j   ] \
 										+ img[ i   *(N+2)+(j-1)] \
 										+ img_old[ i   *(N+2)+(j+1)] \
-										+ delta2*f( i, j, N+2, delta ));*/
+										+ delta2*f( i, j, N+2, delta ));
 				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
+				}
+				//printf("\n");
 			}
-			//printf("\n");
+        	double *tmp = img_old;
+        	img_old = img;
+        	img = tmp;
+//			printf("k:%d\n",k);
 		}
+		if (th < 0.0)
+			break;
+
+		d = threshold(img, img_old, N);
+        printf("d %f\n", d);
 	}
 	return;
 }
@@ -106,7 +129,7 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
 #pragma omp parallel
     {
 #pragma omp master
-        printf("Numthreads %i\n", omp_get_num_threads());
+        printf("NumThreads %i\n", omp_get_num_threads());
         for (int k = 0; k < kmax; k++) {
 
 #pragma omp for
@@ -165,7 +188,7 @@ void gauss_mp(double* img, int N, int max_iter){
         
 #pragma omp single
         {
-            printf("Numthreads %i\n", omp_get_num_threads());
+            printf("NumThreads %i\n", omp_get_num_threads());
             start = malloc(sizeof(int) * (omp_get_num_threads() + 2));
             finish = malloc(sizeof(int) * (omp_get_num_threads() + 2));
             start[omp_get_num_threads() + 1] = max_iter + 1;
@@ -249,11 +272,11 @@ void poisson(int n, double *grid, double th, int kmax, int choice) {
 
     if (choice == 0) {
 //        printf("Poisson calculating. Using the jacobi method.");
-        jacobi(grid, grid_old, n, kmax);
+        jacobi(grid, grid_old, n, kmax, th);
     }
     else if (choice == 1) {
 //        printf("Poisson calculating. Using the gauss method.");
-        gauss(grid, grid_old, n, kmax);
+        gauss(grid, grid_old, n, kmax, th);
     }
     else if(choice == 2) {
 //        printf("Poisson calculating. Using the jacobi_mp method.");

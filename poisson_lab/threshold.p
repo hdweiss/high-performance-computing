@@ -2,7 +2,7 @@ set autoscale
 set term post eps enhanced color
 set out 'threshold.eps'
 
-set title "Performance"
+set title "Convergence"
 set xlabel "Threshold"
 set ylabel "Time [s]"
 

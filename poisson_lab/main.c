@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     int	max_iter = 1;
     double *image;
 	int choice = 0;
-	double threshold = 0.08;
+	double threshold = -1.0;
 
     //max_iter = 400;
 
@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
 
     if ( argc >= 4 )
         max_iter = atoi(argv[3]);
+
+	if ( argc >= 5)
+		threshold = atof(argv[4]);
 
     image = (double *)malloc( (N+2) * (N+2) * sizeof(double));
     if ( image == NULL ) {
