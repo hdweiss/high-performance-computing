@@ -356,16 +356,52 @@ The Jacobi method only contains data dependencies between iterations.
  #pragma statements to the code.
 \end_layout
 
-\begin_layout Standard
-Why is the outer most loop inside the #parallel but not part of the worksharing?
+\begin_layout Itemize
+Why is the outer most loop inside the #parallel but not part of the work
+ sharing?
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Scoping of variables.
 \end_layout
 
 \begin_layout Standard
-Which #pragma statements are added?
+The first statement we add at the top of the Jaboci_mp function is the omp
+ parallel macro.
+ This will initialize all of the threads.
+ This region is first ended at the end of the function, causing the threads
+ to exist the entire lifetime of the function.
+ Next a regular for loop, namely one thats not a work sharing construct,
+ is started in that region.
+ This outer most for loop iterates through all of the iterations the Jacobi
+ should run.
+ The next for loop iterates through all row numbers of the array and is
+ created by using the omp for directive.
+ The inner most loop will iterate through all column and calculate all the
+ values for a row.
+\end_layout
+
+\begin_layout Standard
+By wrapping the second loop around an OpenMP work sharing construct, we
+ parallelize the calculation of the image.
+ OpenMP will chop up the image into 
+\begin_inset Quotes eld
+\end_inset
+
+slices
+\begin_inset Quotes erd
+\end_inset
+
+ and distribute it to the threads to work on.
+ All threads are synchronized after they are done with the second loop.
+ This blocks all the threads until the current iteration is done.
+ After the for loop is done, a omp single directive swaps old with the new
+ array.
+\end_layout
+
+\begin_layout Standard
+Finally the outer loop will start a new iteration until all iterations have
+ been calculated.
 \end_layout
 
 \begin_layout Subsection
@@ -391,6 +427,36 @@ thread t and t+1 have performed the same number of steps
 
 \begin_layout Standard
 The two conditions ensures that the data dependencies are respected.
+\end_layout
+
+\begin_layout Standard
+Our function makes use of two Integer arrays to communicate the two conditions
+ named above.
+ Both arrays are the size of the thread number, with two additional 
+\begin_inset Quotes eld
+\end_inset
+
+dummy
+\begin_inset Quotes erd
+\end_inset
+
+ elements, which takes care of the corner cases first and the last thread.
+\end_layout
+
+\begin_layout Itemize
+needs to flush on write/read in guards
+\end_layout
+
+\begin_layout Itemize
+two guards, no synchronization, performance etc.
+\end_layout
+
+\begin_layout Itemize
+scheduling static
+\end_layout
+
+\begin_layout Itemize
+rounding errors, array size needs to be LCD to threadsize 840
 \end_layout
 
 \begin_layout Section
