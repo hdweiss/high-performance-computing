@@ -93,7 +93,7 @@ vspace{1cm}
 
 \begin_layout Standard
 \align center
-Henning Weiss - s062407
+Rasmus Bo Sørensen - s072080
 \end_layout
 
 \begin_layout Standard
@@ -114,7 +114,7 @@ vspace{0.6cm}
 
 \begin_layout Standard
 \align center
-Rasmus Bo Sørensen - s072080
+Henning Weiss - s062407
 \end_layout
 
 \begin_layout Standard
@@ -736,6 +736,37 @@ Comparison
 \end_layout
 
 \begin_layout Standard
+The output of our implementations can be seen in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Result"
+
+\end_inset
+
+.
+ In figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Result"
+
+\end_inset
+
+ the value of the radiator has been changed to 
+\begin_inset Formula $500\: C/m^{2}$
+\end_inset
+
+, to enhance the look of the image.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -757,6 +788,12 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Result"
+
+\end_inset
+
 Figure of the steady state temperature in the square room.
  Blue is cold and red is warm.
 \end_layout
@@ -776,8 +813,32 @@ Figure of the steady state temperature in the square room.
 \end_layout
 
 \begin_layout Standard
-Performance of the sequential Jacobi and Gauss-Seidel method as a function
- of N, evaluate the performance of caching.
+The performance of the two sequential versions can be seen in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SequentialPerformance"
+
+\end_inset
+
+.
+ In the experiment in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SequentialPerformance"
+
+\end_inset
+
+ the grid size is varied to see how the two methods perform for different
+ problem sizes.
+ The tests have been run with a constant number of iterations.
 \end_layout
 
 \begin_layout Standard
@@ -785,12 +846,6 @@ Performance of the sequential Jacobi and Gauss-Seidel method as a function
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-Plot of Jacobi method as a function of N.
- Y axis = iterations pr.
- second more fair, because Gauss-Seidel converges faster.
-\end_layout
 
 \begin_layout Plain Layout
 \align center
@@ -806,6 +861,12 @@ Plot of Jacobi method as a function of N.
 \begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SequentialPerformance"
+
+\end_inset
+
 Comparing performance of the sequential and parallelized Jacobi and Gauss-Seidel
  methods.
 \end_layout
@@ -821,6 +882,11 @@ Comparing performance of the sequential and parallelized Jacobi and Gauss-Seidel
 \end_layout
 
 \begin_layout Standard
+The Jacobi method is clearly more efficient in terms of MFLOP/s.
+ 
+\end_layout
+
+\begin_layout Standard
 How does the performance of the two methods differ?
 \end_layout
 
@@ -830,6 +896,25 @@ Plot to see the convergence of the two sequential methods.
 
 \begin_layout Standard
 State assumptions and fixed values.
+\end_layout
+
+\begin_layout Standard
+To evaluate how the two methods converge towards the true solution of the
+ Poisson problem, we measure the run time of the methods when varying the
+ threshold.
+ A graph showing the outcome of this experiment can be seen in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Threshold"
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -883,7 +968,36 @@ reference "fig:Threshold"
 
 \end_inset
 
- it is clearly seen that the What is seen on the graph?
+ it can be seen that in this case the Jacobi method finishes faster than
+ the Gauss-Seidel method.
+ Two reasons for the Jacobi method to finish faster than the Gauss-Seidel
+ method, could be:
+\end_layout
+
+\begin_layout Itemize
+The Jacobi method converges faster than the Gauss-Seidel method.
+\end_layout
+
+\begin_layout Itemize
+Our implementation of the Gauss-Seidel method performs worse pr iteration
+ than the Jacobi method.
+\end_layout
+
+\begin_layout Standard
+When running the two method with a threshold of 0.4 the number of iterations
+ for the two method are about 2100 for the Jacobi method and about 2500
+ for the Gauss-Seidel method.
+ This yields that the Jacobi method converges faster than the Gauss-Seidel
+ method.
+ This difference in the number iterations does not account for the difference
+ in the run times of around a factor of 3.
+ This is where the performance of the two method pr.
+ iteration comes into the picture.
+\end_layout
+
+\begin_layout Standard
+We realize that our results diverge from the general understanding of which
+ method converges faster.
 \end_layout
 
 \begin_layout Standard
