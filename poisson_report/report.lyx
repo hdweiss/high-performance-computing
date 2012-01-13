@@ -1,60 +1,41 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 1.6.10 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
-\maintain_unincluded_children false
 \language english
-\language_package default
 \inputencoding auto
-\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
-\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
-\default_output_format default
-\output_sync 0
-\bibtex_command default
-\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
-\use_mhchem 1
-\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
-\use_indices false
 \paperorientation portrait
-\suppress_date false
-\use_refstyle 0
-\index Index
-\shortcut idx
-\color #008000
-\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\paragraph_indentation default
+\defskip medskip
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\html_math_output 0
-\html_css_as_file 0
-\html_be_strict false
+\author "" 
 \end_header
 
 \begin_body
@@ -201,10 +182,8 @@ Solving the Poisson problem has many usages in science and engineering.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\[
-u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²}f_{i,j}\right)
-\]
+\begin_inset Formula \[
+u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²}f_{i,j}\right)\]
 
 \end_inset
 
@@ -273,10 +252,8 @@ reference "eq:jacobi"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:jacobi}
-\end{equation}
+\begin_inset Formula \begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:jacobi}\end{equation}
 
 \end_inset
 
@@ -316,10 +293,8 @@ reference "eq:gauss-seidel"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k+1)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k+1)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:gauss-seidel}
-\end{equation}
+\begin_inset Formula \begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k+1)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k+1)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:gauss-seidel}\end{equation}
 
 \end_inset
 
@@ -400,18 +375,59 @@ Experimental setup
 \begin_layout Standard
 The experiments we have run for this assignment has been carried out using
  bash scripts to test and plot the results.
+ Our main program takes several parameters as input.
+ These are the dimension of the grid in which the problem is discretized,
+ the function to be used for the calculation of the result, the maximum
+ number of iterations and finally the threshold as an optional argument
+ if we want to use this a stopping criterion instead of the number of iterations.
+ This allowed us to make runs and get results varying the 
+\emph on
+grid size , 
+\emph default
+the 
+\emph on
+threshold
+\emph default
+ on which the serial versions converge and the 
+\emph on
+number of threads 
+\emph default
+on which parellel versions run.
+ To control the number of threads to be used in the parallel versions, environme
+ntal variable OMP_NUM_THREADS was used and set for different runs of the
+ program.
 \end_layout
 
 \begin_layout Standard
-How is the performance measured? wall-clock time wtime()
+The performance of diferrent runs were evaluated in terms of 
+\emph on
+execution time
+\emph default
+, number of 
+\emph on
+iterations per sec
+\emph default
+ and 
+\emph on
+FLOPs
+\emph default
+(floating point operations) 
+\emph on
+per sec
+\emph default
+.
+ To measure time we used function time which measures the wall-clock time.
+ For the calculation of FLOPS, we used Sun Studio collect tool to query
+ the corresponding hardware counters.
 \end_layout
 
 \begin_layout Standard
-How are the programs run? The programs are started from scripts.
-\end_layout
-
-\begin_layout Standard
-How are the program analyzed? - Thread-analyzer
+To automatically generate results, we wrote wrapper scripts that vary the
+ input parameteres mentioned above, and evaluate the performance metrics
+ in each case.
+ Bash and awk scripting was used as well as gnuplot to automatically produce
+ graphical representation of the results.
+ The graphs are presented in the following sections.
 \end_layout
 
 \begin_layout Section
@@ -465,7 +481,7 @@ Machine configuration for the performed experiments.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="7">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
