@@ -47,13 +47,14 @@ void init_array(double* image, double value, int N){
 void jacobi(double *grid, double *grid_old, int n, int kmax, double th) {
 	double delta = 2.0/(double)(n+2);
 	double delta2 = pow(delta,2);
+	int iter = 0;
 
     printf("NumThreads 1\n");
 
-	double d = 1.0; 
+	double d = th + 1.0; 
 	while (d > th) { 
-
     	for (int k = 0; k < kmax; k++) {
+			iter++;
 			for (int i = 1; i <= n; i++) {
 				for (int j = 1; j <= n; j++) {
 					double f_ij = f( i, j, n+2, delta );
@@ -76,21 +77,23 @@ void jacobi(double *grid, double *grid_old, int n, int kmax, double th) {
 			break;
 
 		d = threshold(grid, grid_old, n);
-        printf("d %f\n", d);
+        //printf("d %f\n", d);
 	}
+	printf("Jacobi method finished in %d iterations\n",iter);
 	return;
 }
 
 void gauss(double* img,double *img_old, int N, int max_iter, double th){
 	double delta = 2.0/(double)(N+2);
 	double delta2 = pow(delta,2);
+	int iter = 0;
 
     printf("NumThreads 1\n");
 
-	double d = 1.0; 
+	double d = th + 1.0; 
 	while (d > th) { 
-
 	    for(int k = 0; k < max_iter; k++){
+			iter++;
 			for(int i = 1; i <= N; i++){
 				for(int j = 1; j <= N; j++){
 /*					img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
@@ -99,9 +102,9 @@ void gauss(double* img,double *img_old, int N, int max_iter, double th){
 										+ img[ i   *(N+2)+(j+1)] \
 										+ delta2*f( i, j, N+2, delta ));
 */
-				img[i*(N+2)+j] = 0.25*(   img[(i-1)*(N+2)+ j   ] \
+				img[i*(N+2)+j] = 0.25*(   img[    (i-1)*(N+2)+ j   ] \
 										+ img_old[(i+1)*(N+2)+ j   ] \
-										+ img[ i   *(N+2)+(j-1)] \
+										+ img[     i   *(N+2)+(j-1)] \
 										+ img_old[ i   *(N+2)+(j+1)] \
 										+ delta2*f( i, j, N+2, delta ));
 				//printf("%.1f ",f(i,j,N+2,delta)*delta2);
@@ -117,8 +120,9 @@ void gauss(double* img,double *img_old, int N, int max_iter, double th){
 			break;
 
 		d = threshold(img, img_old, N);
-        printf("d %f\n", d);
+        //printf("d %f\n", d);
 	}
+	printf("Gauss method finished in %d iterations\n",iter);
 	return;
 }
 
@@ -151,7 +155,7 @@ void jacobi_mp(double *grid, double *grid_old, int n, int kmax) {
             double *tmp = grid_old;
             grid_old = grid;
             grid = tmp;
-        } /* End master */
+        } /* End single */
 
         }
             
