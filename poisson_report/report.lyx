@@ -416,7 +416,7 @@ FLOPs
 per sec
 \emph default
 .
- To measure time, function time was used.
+ To measure time we used function time which measures the wall-clock time.
  For the calculation of FLOPS, we used Sun Studio collect tool to query
  the corresponding hardware counters.
 \end_layout
