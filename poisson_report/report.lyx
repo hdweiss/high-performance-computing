@@ -1,41 +1,60 @@
-#LyX 1.6.10 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -182,8 +201,10 @@ Solving the Poisson problem has many usages in science and engineering.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²}f_{i,j}\right)\]
+\begin_inset Formula 
+\[
+u_{i,j}=\dfrac{1}{4}\left(u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}+\Delta\text{²}f_{i,j}\right)
+\]
 
 \end_inset
 
@@ -252,8 +273,10 @@ reference "eq:jacobi"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \begin{equation}
-u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:jacobi}\end{equation}
+\begin_inset Formula 
+\begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:jacobi}
+\end{equation}
 
 \end_inset
 
@@ -293,8 +316,10 @@ reference "eq:gauss-seidel"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \begin{equation}
-u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k+1)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k+1)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:gauss-seidel}\end{equation}
+\begin_inset Formula 
+\begin{equation}
+u_{i,j}^{(k+1)}=\dfrac{1}{4}\left(u_{i-1,j}^{(k+1)}+u_{i+1,j}^{(k)}+u_{i,j-1}^{(k+1)}+u_{i,j+1}^{(k)}+\Delta\text{²}f_{i,j}\right)\label{eq:gauss-seidel}
+\end{equation}
 
 \end_inset
 
@@ -325,19 +350,11 @@ OpenMP Jacobi
 
 \begin_layout Standard
 The Jacobi method only contains data dependencies between iterations.
- It is therefore very easy to parallelize the calculation of each iteration,
- a barrier after each iteration is needed to enforce this data dependency.
+ It is therefore straight forward to parallelize the calculation of each
+ iteration, as a barrier after each iteration is enough to enforce this
+ data dependency.
  The implementation of the Jacobi method is parallelized only by adding
  #pragma statements to the code.
-\end_layout
-
-\begin_layout Itemize
-Why is the outer most loop inside the #parallel but not part of the work
- sharing?
-\end_layout
-
-\begin_layout Itemize
-Scoping of variables.
 \end_layout
 
 \begin_layout Standard
@@ -351,7 +368,7 @@ The first statement we add at the top of the Jaboci_mp function is the omp
  This outer most for loop iterates through all of the iterations the Jacobi
  should run.
  The next for loop iterates through all row numbers of the array and is
- created by using the omp for directive.
+ declared as a work sharing construct by using the omp for directive.
  The inner most loop will iterate through all column and calculate all the
  values for a row.
 \end_layout
@@ -368,15 +385,13 @@ slices
 \end_inset
 
  and distribute it to the threads to work on.
- All threads are synchronized after they are done with the second loop.
- This blocks all the threads until the current iteration is done.
- After the for loop is done, a omp single directive swaps old with the new
- array.
-\end_layout
-
-\begin_layout Standard
-Finally the outer loop will start a new iteration until all iterations have
- been calculated.
+ All threads are synchronized after they are done with the second loop,
+ to guarantee that all values for the current iteration of the entire grid
+ have been calculated.
+ After the for loop is done, an omp single directive swaps the old with
+ the new array.
+ Finally the outer loop will start a new iteration until all iterations
+ have been calculated.
 \end_layout
 
 \begin_layout Subsection
@@ -415,23 +430,114 @@ dummy
 \begin_inset Quotes erd
 \end_inset
 
- elements, which takes care of the corner cases first and the last thread.
+ elements.
+ Having those dummy values makes it possible for us to ignore corner cases
+ for the first and the last thread with regard to array accesses.
+ The first array is called start and is used by the threads to indicate
+ that they have calculated their first row of the grid.
+ A second array called end is used to indicate that the final row has been
+ calculated.
+ A thread can only start calculating it's first line if the last line of
+ the previous thread has been calculated for the same iteration.
+ Secondly a thread can only calculate it's last line for the k'th iteration
+ if the next thread has calculated it's first row of the k'th-1 iteration.
+ Both of those Properties are implemented by 
+\begin_inset Quotes eld
+\end_inset
+
+Guard 1
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Guard 2
+\begin_inset Quotes erd
+\end_inset
+
+.
+ When a thread is not touching it's first or last row in does not need to
+ take any other threads behavior into account allowing the threads, at least
+ in theory, to do as much work as possible without having to wait unnecessarily.
 \end_layout
 
-\begin_layout Itemize
-needs to flush on write/read in guards
+\begin_layout Standard
+We use static scheduling to distribute the work done on the grid into 
+\begin_inset Formula $N/threadnumber$
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+slices
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Each thread will calculate it's offset into that array and loop over the
+ according rows it should work on.
+ The inner most loop does not need modification, as it will iterate over
+ all columns in one row.
 \end_layout
 
-\begin_layout Itemize
-two guards, no synchronization, performance etc.
+\begin_layout Standard
+The implementation starts with a parallel region, followed by a single directive
+ that initializes all the shared values.
+ Following that, each thread initializes the flag arrays and calculates
+ the size of the grid.
+ A barrier is put after that to ensure that all threads have initialized
+ their data before starting the actual work.
+ Next the outermost loop of the iterations is done by all threads.
+ The first construct meet in that loop is the 
+\begin_inset Quotes eld
+\end_inset
+
+Guard 1
+\begin_inset Quotes erd
+\end_inset
+
+ condition.
+ This consists of a while loop that spins until the thread is allowed to
+ do work.
+ On each idle spin the flush directive is called, making sure that the thread
+ will see an update from the other threads as soon as it takes place.
 \end_layout
 
-\begin_layout Itemize
-scheduling static
+\begin_layout Standard
+Next the actual work sharing is started.
+ It consists of the omp for directive with static scheduling and a nowait
+ option.
+ If the nowait would not be in place, the threads would be blocked on each
+ iteration, preventing the threads from doing more work as soon as possible.
+ Instead of the implied barrier, our two guards will ensure that data is
+ accessed and modified with accordance to the discussion above.
+ In the work sharing construct we distinguish between three cases.
+ Either a thread starts calculating on the first row, on the last row or
+ it's somewhere in the middle.
+ In the case of the first row, the thread will do the work and set it's
+ slot in the start array to the current iteration.
+ In case of the last row, the thread will wait for 
+\begin_inset Quotes eld
+\end_inset
+
+Guard 2
+\begin_inset Quotes erd
+\end_inset
+
+, do it's work and update it's finish array to the current iteration.
+ This continues until all iterations of the outer most loop have been completed.
+ Finally all threads are synchronized by the implied barrier placed by the
+ end of the parallel region and the grid will contain the desired results.
 \end_layout
 
-\begin_layout Itemize
-rounding errors, array size needs to be LCD to threadsize 840
+\begin_layout Standard
+Currently the way we calculate the grid size of each thread is calculated
+ by size of the array divided by number of threads.
+ Since we don't take rounding into account the array size must dividable
+ by the number of threads without a remainder.
 \end_layout
 
 \begin_layout Section
@@ -547,7 +653,7 @@ Machine configuration for the performed experiments.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="7">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
