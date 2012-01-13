@@ -564,14 +564,14 @@ threshold
 \emph on
 number of threads 
 \emph default
-on which parellel versions run.
+on which parallel versions run.
  To control the number of threads to be used in the parallel versions, environme
 ntal variable OMP_NUM_THREADS was used and set for different runs of the
  program.
 \end_layout
 
 \begin_layout Standard
-The performance of diferrent runs were evaluated in terms of 
+The performance of different runs were evaluated in terms of 
 \emph on
 execution time
 \emph default
@@ -595,7 +595,7 @@ per sec
 
 \begin_layout Standard
 To automatically generate results, we wrote wrapper scripts that vary the
- input parameteres mentioned above, and evaluate the performance metrics
+ input parameters mentioned above, and evaluate the performance metrics
  in each case.
  Bash and awk scripting was used as well as gnuplot to automatically produce
  graphical representation of the results.
@@ -1241,10 +1241,8 @@ We have implemented and parallelized two iterative methods for approximating
  a solution to the Poisson problem.
  We have compared the sequential and parallelized versions.
  We have suggested how the each version can be optimized.
- We have shown that for problems larger than XX th Gauss-Seidel method converges
- considerably faster than the Jacobi version.
  When the sequential versions are parallelized we see that the Jacobi method
- becomes faster than the....
+ becomes faster than the Gauss-Seidel version.
  The parallelized Gauss-Seidel method can be optimized for bigger problems
  by removing the use for two arrays to hold the current iteration and the
  next iteration.
