@@ -1261,7 +1261,10 @@ We have implemented and parallelized two iterative methods for approximating
  We have shown that the Gauss-Seidel method converges slower than the Jacobi
  version.
  When the sequential versions are parallelized we see that the Jacobi method
- peaks for 3 threads with a near linear speed up.
+ becomes faster than the Gauss-Seidel version.
+ The parallelized Gauss-Seidel method can be optimized for bigger problems
+ by removing the use for two arrays to hold the current iteration and the
+ next iteration.
 \end_layout
 
 \end_body
