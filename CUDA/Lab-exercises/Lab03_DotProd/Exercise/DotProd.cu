@@ -19,6 +19,10 @@
 #include "DotProd_Gold.c"
 #include "DotProd_kernel.cu"
 
+
+__constant__ float* Vec1_d; 
+__constant__ float* Vec2_d;
+
 int main(int argc, char* argv[]) {
   // Screen output
   printf("DotProd\n");
@@ -66,12 +70,10 @@ int main(int argc, char* argv[]) {
   // initialize the two vectors
   for (int i = 0; i < N; ++i) {
      Vec1_h[i] = 2.0;
-     Vec2_h[i] = i % 10; 
+     Vec2_h[i] = (float)(i % 10); 
   }
 
-  // Pointers for GPU (device) data
-  float* Vec1_d; 
-  float* Vec2_d; 
+  // Pointers for GPU (device) data 
   float* gpuResult; 
 
  // YOUR TASKS:

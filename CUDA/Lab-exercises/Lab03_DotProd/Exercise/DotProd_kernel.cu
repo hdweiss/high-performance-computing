@@ -10,7 +10,8 @@ __global__ void DotProd_kernel(float *result, const float* vec1, const float* ve
  const unsigned int outputIdx = threadIdx.x + blockDim.x*blockIdx.x ;
  
  //?????
- if(outputIdx < N)
+ if(outputIdx < N){
 	result[outputIdx] = vec1[outputIdx] * vec2[outputIdx];
+ }
 
 }

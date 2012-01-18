@@ -132,6 +132,8 @@ int main( int argc, char* argv[])
   }
 
   CUT_SAFE_CALL(cutStopTimer(timer_gpu));
+	CUDA_SAFE_CALL( cudaFree(partialsums_d) );
+	CUDA_SAFE_CALL( cudaMalloc( (void**)&partialsums_d, BLOCKS*sizeof(float) ) ); 
 
 /***************************
  * GPU execution (v2)      *
@@ -164,6 +166,12 @@ int main( int argc, char* argv[])
   }
 
   CUT_SAFE_CALL(cutStopTimer(timer_gpu2));
+  CUDA_SAFE_CALL( cudaFree(partialsums_d) );
+  CUDA_SAFE_CALL( cudaMalloc( (void**)&partialsums_d, BLOCKS*sizeof(float) ) ); 
+  for (int i = 0; i < BLOCKS; i++)
+	  partialsums_h[i] = 0.0;
+
+  CUDA_SAFE_CALL( cudaMemcpy( partialsums_d, partialsums_h, BLOCKS*sizeof(float), cudaMemcpyHostToDevice) );
 
 /***************************
  * GPU execution (v3)      *
