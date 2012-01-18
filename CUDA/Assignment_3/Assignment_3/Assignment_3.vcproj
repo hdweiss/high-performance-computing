@@ -382,6 +382,18 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\mm_util.cu"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="CUDA Build Rule"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
