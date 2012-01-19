@@ -63,10 +63,11 @@ inline long check_matrix(Matrix* correct, Matrix* matrix) {
 		if(abs(matrix->elements[i] - correct->elements[i]) > 0.1) {
 			errors++;
 
-		//	if(debuggy)
-				//printf("Error at: %i\n", i);
-			if(debuggy && errors == 1)
-				printf("1. Error: %f vs. %f\n", matrix->elements[i], correct->elements[i]);
+			//if(debuggy)
+			//	printf("Error at: %i\n", i);
+			if(debuggy && errors == 1){
+				printf("  1. Error at: %i   Elements: %f vs. %f\n", i, matrix->elements[i], correct->elements[i]);
+			}
 		}
 	}
 
@@ -94,7 +95,7 @@ __device__ float GetElement(const Matrix A, int row, int col)
 }
 
 // Set a matrix element
-__device__ void SetElement(Matrix A, int row, int col,
+__device__ inline void SetElement(Matrix A, int row, int col,
                            float value)
 {
     A.elements[row * A.stride + col] = value;
@@ -111,5 +112,16 @@ __device__ Matrix GetSubMatrix(Matrix A, int row, int col, int BLOCK_SIZE)
     Asub.stride = A.stride;
     Asub.elements = &A.elements[A.stride * BLOCK_SIZE * row
                                     + BLOCK_SIZE * col];
+    return Asub;
+}
+
+__device__ Matrix GetSubMatrixXX(Matrix A, int row, int col, int BLOCK_WIDTH, int BLOCK_HEIGHT)
+{
+    Matrix Asub;
+    Asub.width = BLOCK_WIDTH;
+    Asub.height = BLOCK_HEIGHT;
+    Asub.stride = A.stride;
+    Asub.elements = &A.elements[A.stride * BLOCK_HEIGHT * row
+                                    + BLOCK_WIDTH * col];
     return Asub;
 }

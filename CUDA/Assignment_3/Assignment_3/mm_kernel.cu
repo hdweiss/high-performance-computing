@@ -62,43 +62,131 @@ __global__ void mm_kernel3(Matrix C, const Matrix A, const Matrix B)
     // Each thread block computes one sub­matrix Csub of C
     Matrix Csub = GetSubMatrix(C, blockRow, blockCol, BLOCK_SIZE);
 
-	float Cvalue[BLOCK_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	float Cvalue[BLOCK_SIZE];
 
-    int row = threadIdx.y;
     int col = threadIdx.x;
+	
+	#pragma unroll BLOCK_SIZE
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		Cvalue[i] = 0.0f;
+	}
+
 
     for (int m = 0; m < (A.width / BLOCK_SIZE); ++m) {
+		__syncthreads();
         Matrix Asub = GetSubMatrix(A, blockRow, m, BLOCK_SIZE);
         Matrix Bsub = GetSubMatrix(B, m, blockCol, BLOCK_SIZE);
 
         __shared__ float As[BLOCK_SIZE][BLOCK_SIZE];
-        As[row][col] = GetElement(Asub, row, col);
-
-		float Bs[BLOCK_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-
-        __syncthreads();
+		
+		#pragma unroll BLOCK_SIZE
 		for(int i = 0; i < BLOCK_SIZE; ++i){
-			// TODO populate Bs to new values.
-			
-			for (int e = 0; e < BLOCK_SIZE; ++e)
-				Cvalue += As[row+i][e] * Bs[e]; // TODO: Fix the indexing of the Arrays
+			As[i][col] = GetElement(Asub, i, col);
 		}
 
         __syncthreads();
+
+		#pragma unroll BLOCK_SIZE
+		for(int e = 0; e < BLOCK_SIZE; ++e){	
+			float Bs = GetElement(Bsub, e, col);
+			#pragma unroll BLOCK_SIZE
+			for (int i = 0; i < BLOCK_SIZE; ++i)
+				Cvalue[i] += As[i][e] * Bs; 
+		}
     }
-    SetElement(Csub, row, col, Cvalue);
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		SetElement(Csub, i, col, Cvalue[i]);
+	}
 }
 
+#define BLOCK_SIZE2 64
 __global__ void mm_kernel4(Matrix C, const Matrix A, const Matrix B)
 // Optimized 4b
 {
+	int blockRow = blockIdx.y;
+    int blockCol = blockIdx.x;
 
+    // Each thread block computes one sub­matrix Csub of C
+    Matrix Csub = GetSubMatrixXX(C, blockRow, blockCol, BLOCK_SIZE2, BLOCK_SIZE);
+
+	float Cvalue[BLOCK_SIZE];
+
+    int col = threadIdx.x;
+
+	//#pragma unroll BLOCK_SIZE
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		Cvalue[i] = 0.0f;
+	}
+
+
+    for (int m = 0; m < (A.width / BLOCK_SIZE); ++m) {
+		__syncthreads();
+        Matrix Asub = GetSubMatrix(A, blockRow, m, BLOCK_SIZE);
+        Matrix Bsub = GetSubMatrixXX(B, m, blockCol, BLOCK_SIZE2, BLOCK_SIZE);
+
+        __shared__ float As[BLOCK_SIZE*BLOCK_SIZE];
+
+		for(int i = 0; i < 4; ++i)
+			As[(i*BLOCK_SIZE2)+col] = GetElement(Asub, (col/BLOCK_SIZE)+i*4, col&(BLOCK_SIZE-1));
+
+        __syncthreads();
+
+		for(int e = 0; e < BLOCK_SIZE; ++e){	
+			float Bs = GetElement(Bsub, e, col);
+			for (int i = 0; i < BLOCK_SIZE; ++i)
+				Cvalue[i] += As[(i*BLOCK_SIZE)+e] * Bs; 
+		}
+    }
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		SetElement(Csub, i, col, Cvalue[i]);
+	}
 }
 
 __global__ void mm_kernel5(Matrix C, const Matrix A, const Matrix B)
 // Optimize as much as possible
 {
+	int blockRow = blockIdx.y;
+    int blockCol = blockIdx.x;
 
+    // Each thread block computes one sub­matrix Csub of C
+    Matrix Csub = GetSubMatrixXX(C, blockRow, blockCol, BLOCK_SIZE2, BLOCK_SIZE);
+
+	float Cvalue[BLOCK_SIZE];
+
+    int col = threadIdx.x;
+
+	#pragma unroll BLOCK_SIZE
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		Cvalue[i] = 0.0f;
+	}
+
+
+    for (int m = 0; m < (A.width / BLOCK_SIZE); ++m) {
+		__syncthreads();
+        Matrix Asub = GetSubMatrix(A, blockRow, m, BLOCK_SIZE);
+        Matrix Bsub = GetSubMatrixXX(B, m, blockCol, BLOCK_SIZE2, BLOCK_SIZE);
+
+        __shared__ float As[BLOCK_SIZE*BLOCK_SIZE];
+
+		#pragma unroll 4
+		for(int i = 0; i < 4; ++i){		//				Shift by 4 = dividing by the block size
+										//							Anding with the block size minus 1 = modulo block size
+			As[(i*BLOCK_SIZE2)+col] = GetElement(Asub, (col>>4)+i*4, col&(BLOCK_SIZE-1));
+		}
+
+        __syncthreads();
+
+		#pragma unroll BLOCK_SIZE
+		for(int e = 0; e < BLOCK_SIZE; ++e){	
+			float Bs = GetElement(Bsub, e, col);
+			#pragma unroll BLOCK_SIZE
+			for (int i = 0; i < BLOCK_SIZE; ++i)
+				Cvalue[i] += As[(i*BLOCK_SIZE)+e] * Bs; 
+		}
+    }
+	#pragma unroll BLOCK_SIZE
+	for(int i = 0; i < BLOCK_SIZE; ++i){
+		SetElement(Csub, i, col, Cvalue[i]);
+	}
 }
 

@@ -10,20 +10,19 @@
 
 // Included CUDA libraries
 #include <cutil.h>
+#include <cublas.h>
 
 // Included files
 #include "mm_util.cu"
 #include "mm_kernel.cu"
 #include "mm_gold.cpp"
 
-#define BLOCK_SIZE 16
-
-
 
 int main( int argc, char* argv[]) 
 {
+	int mm1_BLOCKS = 16;
 	// Screen output
-	printf("MM\n");
+	printf("MM %i\n", mm1_BLOCKS);
 	printf("Parallel Matrix multiplication.\n");
 
 	// Check limitation of available device
@@ -59,20 +58,25 @@ int main( int argc, char* argv[])
 	unsigned timer_gpu3;
 	unsigned timer_gpu4;
 	unsigned timer_gpu5;
+	unsigned timer_gpu6;
 	CUT_SAFE_CALL(cutCreateTimer(&timer_cpu));
 	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu1));
 	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu2));
 	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu3));
 	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu4));
 	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu5));
+	CUT_SAFE_CALL(cutCreateTimer(&timer_gpu6));
 
 	/****************************
 	* Initialization of memory *
 	****************************/
 
-	int m = BLOCK_SIZE*20;
-	int k = BLOCK_SIZE*40;
-	int n = BLOCK_SIZE*60;
+	//int matrix_blocks = 16 * 2;
+	//int m = matrix_blocks*62;
+	//int k = matrix_blocks*62;
+	//int n = matrix_blocks*62;
+	int m, k, n;
+	n = m = k = 1280*2;
 
 	// Pointers to CPU (host) data
 	Matrix A_h;
@@ -120,7 +124,7 @@ int main( int argc, char* argv[])
 	***************************/
 
 	// Split problem into threads
-	int mm1_BLOCKS = 16;
+
 	dim3 mm1_threadBlock( mm1_BLOCKS, mm1_BLOCKS );
 	unsigned int blocky = (unsigned int) ceil(((float)m)/mm1_BLOCKS);
 	unsigned int blockx = (unsigned int)ceil(((float)n)/mm1_BLOCKS);
@@ -239,9 +243,11 @@ int main( int argc, char* argv[])
 	* GPU execution (v4)      *
 	***************************/
 
-	dim3 mm4_blockGrid( 16, 16 ); 
-	dim3 mm4_threadBlock( 16 );
-	int mm4_shared = 10 * sizeof(float);
+	dim3 mm4_threadBlock( 64, 1 );
+	unsigned int blocky4 = (unsigned int) ceil(((float)m)/16);
+	unsigned int blockx4 = (unsigned int)ceil(((float)n)/64);
+
+	dim3 mm4_blockGrid(blockx4, blocky4);
 
 	Matrix mm4_h = clone_matrix(&C_h);
 
@@ -257,7 +263,7 @@ int main( int argc, char* argv[])
 		copy_matrix_to_device( &B_h, &B_d);
 
 		// Kernel invocation
-		mm_kernel4<<< mm4_blockGrid, mm4_threadBlock, mm4_shared >>>(C_d, A_d, B_d); 
+		mm_kernel4<<< mm4_blockGrid, mm4_threadBlock>>>(C_d, A_d, B_d); 
 
 		// Error check
 		CUT_CHECK_ERROR("parallel reduction kernel execution failed\n");
@@ -278,9 +284,11 @@ int main( int argc, char* argv[])
 	* GPU execution (v5)      *
 	***************************/
 
-	dim3 mm5_blockGrid( 16, 16 ); 
-	dim3 mm5_threadBlock( 16 );
-	int mm5_shared = 10 * sizeof(float);
+	dim3 mm5_threadBlock( 64, 1 );
+	unsigned int blocky5 = (unsigned int) ceil(((float)m)/16);
+	unsigned int blockx5 = (unsigned int)ceil(((float)n)/64);
+
+	dim3 mm5_blockGrid(blockx5, blocky5);
 
 	Matrix mm5_h = clone_matrix(&C_h);
 
@@ -296,7 +304,7 @@ int main( int argc, char* argv[])
 		copy_matrix_to_device( &B_h, &B_d);
 
 		// Kernel invocation
-		mm_kernel5<<< mm5_blockGrid, mm5_threadBlock, mm5_shared >>>(C_d, A_d, B_d); 
+		mm_kernel5<<< mm5_blockGrid, mm5_threadBlock>>>(C_d, A_d, B_d); 
 
 		// Error check
 		CUT_CHECK_ERROR("parallel reduction kernel execution failed\n");
@@ -314,18 +322,68 @@ int main( int argc, char* argv[])
 
 	CUT_SAFE_CALL(cutStopTimer(timer_gpu5));
 
+	/***************************
+	* GPU execution (cublas)      *
+	***************************/
+
+	Matrix mmcu_h = clone_matrix(&C_h);
+
+	CUT_SAFE_CALL(cutStartTimer(timer_gpu6));
+
+	A_d = alloc_matrix_on_device( &A_h);
+	B_d = alloc_matrix_on_device( &B_h);
+	C_d = alloc_matrix_on_device(&C_h);
+
+	for (int iter = 0; iter < 100; ++iter) 
+	{
+		copy_matrix_to_device( &A_h, &A_d);
+		copy_matrix_to_device( &B_h, &B_d);
+
+		float alpha = 1.0f;
+		float beta = 0.0f;
+
+		int lda = k; // 10. Parameter
+		int ldb = n; // 8. Parameter
+
+		int ldc = n; // 13. Parameter
+
+		// Invocation of the 
+		cublasSgemm('N', 'N',
+			n, m, k,
+			alpha,
+			B_d.elements, ldb,
+			A_d.elements, lda,
+			beta,
+			C_d.elements, ldc);
+
+		// Error check
+		CUT_CHECK_ERROR("parallel reduction kernel execution failed\n");
+		CUDA_SAFE_CALL( cudaThreadSynchronize() );	
+
+		copy_matrix_from_device(&mmcu_h, &C_d);
+
+		CUDA_SAFE_CALL( cudaThreadSynchronize() );	
+
+	}
+
+	CUDA_SAFE_CALL( cudaFree(A_d.elements));
+	CUDA_SAFE_CALL( cudaFree(B_d.elements));
+	CUDA_SAFE_CALL( cudaFree(C_d.elements));
+
+	CUT_SAFE_CALL(cutStopTimer(timer_gpu6));
 
 	/*********************************
 	* Output timings & verification *
 	*********************************/
 
-	printf("  CPU time           : %.4f (ms)\n\n",cutGetTimerValue(timer_cpu));
+	printf("  CPU time                : %.4f (ms)\n\n",cutGetTimerValue(timer_cpu));
 
-	print_matrix_result(&mm1_h, "Naive", timer_gpu1, timer_cpu, &mmGold_h);
-	print_matrix_result(&mm2_h, "Shared", timer_gpu2, timer_cpu, &mmGold_h);
-	print_matrix_result(&mm3_h, "4a", timer_gpu3, timer_cpu, &mmGold_h);
-	//print_matrix_result(&mm4_h, "4b", timer_gpu4, timer_cpu, &mmGold_h);
-	//print_matrix_result(&mm5_h, "Pimped", timer_gpu5, timer_cpu, &mmGold_h);
+	print_matrix_result(&mm1_h,  "Naive       ", timer_gpu1, timer_cpu, &mmGold_h);
+	print_matrix_result(&mm2_h,  "Shared      ", timer_gpu2, timer_cpu, &mmGold_h);
+	print_matrix_result(&mm3_h,  "4a          ", timer_gpu3, timer_cpu, &mmGold_h);
+	print_matrix_result(&mm4_h,  "4b          ", timer_gpu4, timer_cpu, &mmGold_h);
+	print_matrix_result(&mm5_h,  "Pimped      ", timer_gpu5, timer_cpu, &mmGold_h);
+	print_matrix_result(&mmcu_h, "cublasSgemm ", timer_gpu6, timer_cpu, &mmGold_h);
 
 	/***************************
 	* Cleaning memory         *
@@ -340,4 +398,5 @@ int main( int argc, char* argv[])
 	free(mm3_h.elements); 
 	free(mm4_h.elements); 
 	free(mm5_h.elements); 
+	free(mmcu_h.elements); 
 }

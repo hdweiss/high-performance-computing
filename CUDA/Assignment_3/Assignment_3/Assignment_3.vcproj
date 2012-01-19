@@ -37,6 +37,7 @@
 				Include="$(CUDA_INC_PATH);$(NVSDKCOMPUTE_ROOT)\C\common\inc;$(ProjectDir)\BLAS\inc"
 				Debug="true"
 				Arch="13"
+				PtxAsOptionV="true"
 				Defines=""
 				Optimization="0"
 				RuntimeChecks="3"
