@@ -76,7 +76,7 @@ int main( int argc, char* argv[])
 	//int k = matrix_blocks*62;
 	//int n = matrix_blocks*62;
 	int m, k, n;
-	n = m = k = 1280*2;
+	n = m = k = 1280*3;
 
 	// Pointers to CPU (host) data
 	Matrix A_h;
