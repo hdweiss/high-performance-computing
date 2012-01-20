@@ -1,21 +1,21 @@
 __global__ void mm_kernel1(Matrix C, const Matrix A, const Matrix B)
 // Naive kernel
 {
-	 int y = threadIdx.y + blockDim.y * blockIdx.y;
-	 int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
 
-	 float sum = 0.0f;
+    float sum = 0.0f;
 
-	 int k = A.width;
-	 int n = B.width;
+    int k = A.width;
+    int n = B.width;
 
-	 if(y < C.height && x < C.width) {
+    if(y < C.height && x < C.width) {
 
-		 for(int i = 0; i < k; i++)
-			 sum += A.elements[y*k + i] * B.elements[i*n+ x];
+        for(int i = 0; i < k; i++)
+            sum += A.elements[y*k + i] * B.elements[i*n+ x];
 
-		 C.elements[y * n + x] = sum;
-	 }
+        C.elements[y * n + x] = sum;
+    }
 }
 
 #define BLOCK_SIZE 16
@@ -66,7 +66,7 @@ __global__ void mm_kernel3(Matrix C, const Matrix A, const Matrix B)
 
     int col = threadIdx.x;
 	
-	#pragma unroll BLOCK_SIZE
+    #pragma unroll BLOCK_SIZE
 	for(int i = 0; i < BLOCK_SIZE; ++i){
 		Cvalue[i] = 0.0f;
 	}
@@ -79,17 +79,17 @@ __global__ void mm_kernel3(Matrix C, const Matrix A, const Matrix B)
 
         __shared__ float As[BLOCK_SIZE][BLOCK_SIZE];
 		
-		#pragma unroll BLOCK_SIZE
+        #pragma unroll BLOCK_SIZE
 		for(int i = 0; i < BLOCK_SIZE; ++i){
 			As[i][col] = GetElement(Asub, i, col);
 		}
 
         __syncthreads();
 
-		#pragma unroll BLOCK_SIZE
+        #pragma unroll BLOCK_SIZE
 		for(int e = 0; e < BLOCK_SIZE; ++e){	
 			float Bs = GetElement(Bsub, e, col);
-			#pragma unroll BLOCK_SIZE
+            #pragma unroll BLOCK_SIZE
 			for (int i = 0; i < BLOCK_SIZE; ++i)
 				Cvalue[i] += As[i][e] * Bs; 
 		}
@@ -155,7 +155,7 @@ __global__ void mm_kernel5(Matrix C, const Matrix A, const Matrix B)
 
     int col = threadIdx.x;
 
-	#pragma unroll BLOCK_SIZE
+    #pragma unroll BLOCK_SIZE
 	for(int i = 0; i < BLOCK_SIZE; ++i){
 		Cvalue[i] = 0.0f;
 	}
@@ -169,7 +169,7 @@ __global__ void mm_kernel5(Matrix C, const Matrix A, const Matrix B)
 
         __shared__ float As[BLOCK_SIZE*BLOCK_SIZE];
 
-		#pragma unroll 4
+        #pragma unroll 4
 		for(int i = 0; i < 4; ++i){		//				Shift by 4 = dividing by the block size
 										//							Anding with the block size minus 1 = modulo block size
 			As[(i*BLOCK_SIZE2)+col] = GetElement(Asub, (col>>4)+i*4, col&(BLOCK_SIZE-1));
@@ -177,15 +177,15 @@ __global__ void mm_kernel5(Matrix C, const Matrix A, const Matrix B)
 
         __syncthreads();
 
-		#pragma unroll BLOCK_SIZE
+        #pragma unroll BLOCK_SIZE
 		for(int e = 0; e < BLOCK_SIZE; ++e){	
 			float Bs = GetElement(Bsub, e, col);
-			#pragma unroll BLOCK_SIZE
+            #pragma unroll BLOCK_SIZE
 			for (int i = 0; i < BLOCK_SIZE; ++i)
 				Cvalue[i] += As[(i*BLOCK_SIZE)+e] * Bs; 
 		}
     }
-	#pragma unroll BLOCK_SIZE
+    #pragma unroll BLOCK_SIZE
 	for(int i = 0; i < BLOCK_SIZE; ++i){
 		SetElement(Csub, i, col, Cvalue[i]);
 	}
