@@ -161,7 +161,8 @@ __global__ void mm_kernel5(Matrix C, const Matrix A, const Matrix B)
 	}
 
 
-    for (int m = 0; m < (A.width / BLOCK_SIZE); ++m) {
+	int mm = (A.width / BLOCK_SIZE);
+    for (int m = 0; m < mm; ++m) {
 		__syncthreads();
         Matrix Asub = GetSubMatrix(A, blockRow, m, BLOCK_SIZE);
         Matrix Bsub = GetSubMatrixXX(B, m, blockCol, BLOCK_SIZE2, BLOCK_SIZE);
