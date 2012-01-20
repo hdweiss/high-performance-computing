@@ -31,7 +31,7 @@ inline void copy_matrix_from_device(Matrix* host_matrix, Matrix* device_matrix) 
 	int size = device_matrix->width * device_matrix->height * sizeof(float);
 
 	CUDA_SAFE_CALL( cudaMemcpy( host_matrix->elements, device_matrix->elements, 
-		size, cudaMemcpyDeviceToHost) );
+                                size, cudaMemcpyDeviceToHost) );
 }
 
 inline Matrix alloc_matrix_on_device(Matrix* matrix) {
@@ -59,7 +59,6 @@ inline long check_matrix(Matrix* correct, Matrix* matrix) {
 	int debuggy = 1;
 	
 	for (int i = 0; i < matrix->width*matrix->height; i++) {
-		//if(matrix->elements[i] != 1.0) {
 		if(abs(matrix->elements[i] - correct->elements[i]) > 0.1) {
 			errors++;
 
@@ -78,7 +77,7 @@ inline void print_matrix_result(Matrix* matrix, const char* name,
 								unsigned timer_gpu, unsigned timer_cpu, Matrix* correct) {
 
 	printf("  GPU time %s   : %.4f (ms) , speedup %.2fx\n", name,
-		cutGetTimerValue(timer_gpu),cutGetTimerValue(timer_cpu)/cutGetTimerValue(timer_gpu));
+           cutGetTimerValue(timer_gpu),cutGetTimerValue(timer_cpu)/cutGetTimerValue(timer_gpu));
 
 	int errors = check_matrix(correct, matrix);
 	if (errors == 0)
@@ -96,14 +95,14 @@ __device__ float GetElement(const Matrix A, int row, int col)
 
 // Set a matrix element
 __device__ inline void SetElement(Matrix A, int row, int col,
-                           float value)
+                                  float value)
 {
     A.elements[row * A.stride + col] = value;
 }
 
-// Get the BLOCK_SIZExBLOCK_SIZE sub-­matrix Asub of A that is
-// located col sub-­matrices to the right and row sub-­matrices down
-// from the upper-­left corner of A
+// Get the BLOCK_SIZExBLOCK_SIZE sub-matrix Asub of A that is
+// located col sub-matrices to the right and row sub-matrices down
+// from the upper-left corner of A
 __device__ Matrix GetSubMatrix(Matrix A, int row, int col, int BLOCK_SIZE)
 {
     Matrix Asub;
@@ -111,7 +110,7 @@ __device__ Matrix GetSubMatrix(Matrix A, int row, int col, int BLOCK_SIZE)
     Asub.height = BLOCK_SIZE;
     Asub.stride = A.stride;
     Asub.elements = &A.elements[A.stride * BLOCK_SIZE * row
-                                    + BLOCK_SIZE * col];
+                                + BLOCK_SIZE * col];
     return Asub;
 }
 
@@ -122,6 +121,6 @@ __device__ Matrix GetSubMatrixXX(Matrix A, int row, int col, int BLOCK_WIDTH, in
     Asub.height = BLOCK_HEIGHT;
     Asub.stride = A.stride;
     Asub.elements = &A.elements[A.stride * BLOCK_HEIGHT * row
-                                    + BLOCK_WIDTH * col];
+                                + BLOCK_WIDTH * col];
     return Asub;
 }
